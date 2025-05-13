@@ -24,14 +24,6 @@ jobs:
           sudo apt-get install -y bandit radon pylint
           pip install docformatter
 
-      - name: Install snapd and Vale
-        run: |
-          sudo apt update
-          sudo apt install -y snapd
-          sudo systemctl start snapd
-          sudo ln -s /var/lib/snapd/snap /snap
-          sudo snap install vale
-
       - name: Install Python dependencies
         run: |
           pip install -r requirements.txt

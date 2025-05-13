@@ -2,9 +2,6 @@ name: pre-commit
 
 on:
   push:
-    branches:
-      - 'release*'
-      - 'clean*'
   pull_request:
 
 jobs:

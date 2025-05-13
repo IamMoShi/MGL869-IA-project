@@ -1,15 +1,15 @@
-FROM python:3.9-slim
+FROM python:3.13-alpine3.21
 
 # Set a working directory
-WORKDIR /app
+WORKDIR /ia-api
 
 # Copy files into the container
-COPY requirements.txt .
-COPY *.py .
+COPY requirements.ia.txt .
+COPY app app
 
 # Install Python dependencies without cache
 # RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.ia.txt
 
 # Start the application with uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8088"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0"]

@@ -1,13 +1,24 @@
 services:
-  mgl869fastapi:
+  ia-api:
     build:
-      context: ./backend/fastAPI
+      context: ./ia-api
       dockerfile: Dockerfile
-    container_name: mgl869_fastapi
+    container_name: ia-api
     ports:
-      - "8088:8088"
+      - "8000:8000"
     volumes:
-      - "C:/Data/AutoDetectData/:/AutoDetectData/"
-      - "C:/Data/AutoDetectModel/:/AutoDetectModel/"
-      - "./backend/fastAPI/main.py:/app/main.py"
-      - "./backend/fastAPI/Tests.py:/app/Tests.py"
+      - ./ia-api:/ia-api
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  web-server:
+    build:
+      context: ./web-server
+      dockerfile: Dockerfile
+    container_name: web-server
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./web-server/.env

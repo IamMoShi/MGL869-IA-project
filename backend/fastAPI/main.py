@@ -19,11 +19,8 @@ model = None
 
 @dataclass
 class AutoDetectData:
-    topo_name: str = None
-    mask_name: str = None
-    user_mask_name: str = None
-    iou_score: float = None
-
+    image_name: str = None
+    
 
 @dataclass
 class AutoDetectModel:
@@ -40,14 +37,19 @@ def root():
 
 @app.get("/download/{file_name}")
 async def download_file(file_name: str):
-    # Asynchronously handles the downloading of a file.
-    # Args:
-    #     file_name (str): The name of the file to be downloaded.
-    # Returns:
-    #     FileResponse: A response object that allows the client to download the specified file.
-    # Note:
-    #     The file is expected to be located in the "../AutoDetectData/" directory relative to the script's location.
-    #     Ensure that the file exists and the path is accessible to avoid runtime errors.
+    """
+    Handles the download of a file from the server.
+
+    Args:
+        file_name (str): The name of the file to be downloaded.
+
+    Returns:
+        FileResponse: A FastAPI FileResponse object that streams the file to the client.
+
+    Notes:
+        - The file is retrieved from the "../AutoDetectData/" directory relative to the script's location.
+        - If the file does not exist, FastAPI will raise a 404 error automatically.
+    """
     file_path = f"../AutoDetectData/{file_name}"
     return FileResponse(file_path)
 
@@ -55,14 +57,23 @@ async def download_file(file_name: str):
 # curl -X POST "http://127.0.0.1:8088/upload/" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=@C:\Data\image.jpg;type=image/jpeg"
 @app.post("/upload/")
 async def upload_file(file: UploadFile = File(...)):
-    # This module contains the FastAPI endpoint for file upload.
-    # Functions:
-    #     upload_file(file: UploadFile) -> dict
-    #         Handles the file upload, saves the file to the specified directory, and returns a success message with the file path.
-
+    """
+    Handles the upload of a file to the server.
+    Args:
+        file (UploadFile): The file to be uploaded, provided as a FastAPI UploadFile object.
+    Returns:
+        dict: A dictionary containing:
+            - "message" (str): Status of the operation ("success" or "error").
+            - "file_path" (str, optional): The path where the file was saved (only if successful).
+            - "error" (str, optional): Error message in case of failure.
+    Raises:
+        Exception: If there is an issue while writing the file to the specified path.
+    Notes:
+        - The file is saved to the "../AutoDetectData/" directory relative to the script's location.
+        - The function reads the file content asynchronously and writes it to the specified path.
+    """
     file_name = file.filename
     file_path = f"../AutoDetectData/{file_name}"
-
     try:
         with open(file_path, "wb") as f:
             content = await file.read()
@@ -73,44 +84,31 @@ async def upload_file(file: UploadFile = File(...)):
     return {"message": "success", "file_path": file_path}
 
 
-# curl -X POST "http://127.0.0.1:8088/load_model/" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"model_name\":\"yolo_m_batch_32\", \"model_type\": \"yolo\"}"
-@app.post("/load_model/")
-def load_model_api(auto_detect_model: AutoDetectModel):
-    # Loads a machine learning model based on the provided AutoDetectModel configuration.
-    # Args:
-    #     auto_detect_model (AutoDetectModel): An object containing the model's name and type.
-    # Returns:
-    #     dict: A dictionary containing the status of the operation.
-    #           If successful, it includes a "message" key with the value "success" and the input data.
-    #           If unsuccessful, it includes a "message" key with the value "error" and an "error" key with details.
-    # Raises:
-    #     None: This function does not raise exceptions but returns error messages in the response dictionary.
-    # Notes:
-    #     - The model is loaded from a predefined path: "/AutoDetectModel/{model_name}/model.pt".
-    #     - If the model file does not exist or fails to load, an error message is returned.
-    #     - The loaded model is stored in a global variable `model`.
-    global model
-
-    model_name = auto_detect_model.model_name
-    model_type = auto_detect_model.model_type
-    model_path = Path("/AutoDetectModel") / model_name / "model.pt"
-    if not model_path.exists():
-        return {"message": "error", "error": f"Model not found: {model_path}"}
-    # model = load_model(model_path, model_type)
-    if model is None:
-        return {
-            "message": "error",
-            "error": f"Failed to load the model: {model}",
-        }
-
-    print(f"Loaded the model {model_path}")
-    return {"message": "success", "data": auto_detect_model}
-
-
 # curl -X POST "http://127.0.0.1:8088/detect/" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"topo_name\":\"topo.raw\"}"
 @app.post("/detect/")
 def auto_detect(auto_detect_data: AutoDetectData):
+    # This module contains the FastAPI endpoint for automatic detection.
     return {"message": "success", "data": auto_detect_data}
+
+
+@app.post("/detect2/")
+def detect2(file: UploadFile = File(...)):
+    """
+    Handles the detection process for an uploaded file.
+
+    This function uploads the provided file, performs automatic detection
+    on the uploaded file, and returns a success message along with the
+    filename.
+
+    Args:
+        file (UploadFile): The file to be uploaded and processed.
+
+    Returns:
+        dict: A dictionary containing a success message and the filename of the uploaded file.
+    """
+    upload_file(file)
+    auto_detect(AutoDetectData(image_name=file.filename))
+    return {"message": "success", "file": file.filename}
 
 
 # To start API when using 'python main.py' command

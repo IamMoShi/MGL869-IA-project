@@ -1,0 +1,13 @@
+services:
+  mgl869fastapi:
+    build:
+      context: ./backend/fastAPI
+      dockerfile: Dockerfile
+    container_name: mgl869_fastapi
+    ports:
+      - "8088:8088"
+    volumes:
+      - "C:/Data/AutoDetectData/:/AutoDetectData/"
+      - "C:/Data/AutoDetectModel/:/AutoDetectModel/"
+      - "./backend/fastAPI/main.py:/app/main.py"
+      - "./backend/fastAPI/Tests.py:/app/Tests.py"

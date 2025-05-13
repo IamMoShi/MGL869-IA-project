@@ -8,9 +8,9 @@ Call `docker-compose up -d --build`
 
 # Running Unit Tests
 
-- TBC 
+- TBC
 
-# Alternate tools 
+# Alternate tools
 
 Tools that can be added to requirements.txt for AI learning:
 - opencv-python

@@ -1,0 +1,79 @@
+repos:
+  - repo: https://github.com/pycqa/isort
+    rev: '6.0.1'
+    hooks:
+      - id: isort
+        name: isort (python)
+
+  - repo: https://github.com/psf/black
+    rev: 25.1.0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/pycqa/flake8
+    rev: '7.2.0'
+    hooks:
+      - id: flake8
+
+  - repo: local
+    hooks:
+      - id: bandit
+        name: bandit
+        entry: bandit -c pyproject.toml -r .
+        language: system
+        types: [ python ]
+
+  - repo: local
+    hooks:
+      - id: docformatter
+        name: Format docstrings
+        entry: docformatter --in-place --recursive .
+        language: system
+        types: [python]
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      - id: radon
+        name: radon cyclomatic complexity
+        entry: radon cc -nc -s .
+        language: system
+        types: [ python ]
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.6
+    hooks:
+      - id: codespell
+        args: [
+          "--skip", "*.po,*.json,.venv",
+          "--ignore-words=.codespell.ignore"
+        ]
+        exclude: .vale
+
+  - repo: local
+    hooks:
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [ python ]
+        args: [ ]
+
+  - repo: local
+    hooks:
+      - id: check-commit-msg
+        name: Commit message style checker
+        entry: python3 scripts/check_commit_msg.py
+        language: system
+        stages: [ commit-msg ]

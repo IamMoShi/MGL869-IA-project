@@ -1,0 +1,50 @@
+name: pre-commit
+
+on:
+  push:
+    branches:
+      - 'release*'
+      - 'clean*'
+  pull_request:
+
+jobs:
+  run-pre-commit:
+    name: Run pre-commit hooks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bandit radon pylint
+          pip install docformatter
+
+      - name: Install snapd and Vale
+        run: |
+          sudo apt update
+          sudo apt install -y snapd
+          sudo systemctl start snapd
+          sudo ln -s /var/lib/snapd/snap /snap
+          sudo snap install vale
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Install pre-commit hooks
+        run: pre-commit install-hooks
+
+      - name: Run pre-commit hooks on all files
+        run: pre-commit run --all-files --show-diff-on-failure --color always

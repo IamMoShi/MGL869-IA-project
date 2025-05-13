@@ -1,0 +1,110 @@
+[tool.flake8]
+max-line-length = 79
+exclude = [
+    '.git',
+    '__pycache__',
+    '.venv',
+    '.github'
+]
+max-complexity = 10
+
+[tool.isort]
+profile = "black"
+line_length = 79
+known_first_party = ["monpackage"]
+skip = [".venv", "venv"]
+
+
+[tool.black]
+line-length = 79
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.pylint.'MAIN']
+max-line-length = 79
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", ".github"]
+tests = [
+    "B102", # exec()
+    "B104", # bind to 0.0.0.0
+    "B105", "B106", "B107", "B108", "B109", # hardcoded password & tmp
+    "B113", # requests sans timeout
+    "B201", # flask debug
+    "B202", # tarfile unsafe
+    "B324", # hashlib with insecure hash
+    "B501", "B502", "B503", "B504", "B505", # SSL/TLS issues
+    "B506", # yaml.load
+    "B507", "B508", "B509", # SNMP / SSH
+    "B601", "B602", "B604", "B605", "B607", # subprocess / shell
+    "B608", "B609", # SQL injection, shell wildcard
+    "B610", "B611", "B613", "B614", # Django, Trojan Source, PyTorch
+    "B701", "B703", "B704"  # Template injection/XSS
+]
+skips = [
+    "B101", # assert_used
+    "B103", # set_bad_file_permissions
+    "B110", "B112", # try/except pass/continue
+    "B603", "B606"  # subprocess sans shell=True ou pas de shell
+]
+
+[tool.bandit.any_other_function_with_shell_equals_true]
+no_shell = [
+    "os.execl",
+    "os.execle",
+    "os.execlp",
+    "os.execlpe",
+    "os.execv",
+    "os.execve",
+    "os.execvp",
+    "os.execvpe",
+    "os.spawnl",
+    "os.spawnle",
+    "os.spawnlp",
+    "os.spawnlpe",
+    "os.spawnv",
+    "os.spawnve",
+    "os.spawnvp",
+    "os.spawnvpe",
+    "os.startfile"
+]
+shell = [
+    "os.system",
+    "os.popen",
+    "os.popen2",
+    "os.popen3",
+    "os.popen4",
+    "popen2.popen2",
+    "popen2.popen3",
+    "popen2.popen4",
+    "popen2.Popen3",
+    "popen2.Popen4",
+    "commands.getoutput",
+    "commands.getstatusoutput"
+]
+subprocess = [
+    "subprocess.Popen",
+    "subprocess.call",
+    "subprocess.check_call",
+    "subprocess.check_output"
+]
+
+[tool.pylint]
+disable = [
+    "C0114", # missing-module-docstring
+    #  "C0115",  # missing-class-docstring
+    #  "C0116",  # missing-function-docstring
+    #  "C0103"   # optional: invalid-name
+]

@@ -22,3 +22,5 @@ services:
       - NODE_ENV=production
     env_file:
       - ./web-server/.env
+    volumes:
+      - ./web-server/databases:/web-server/databases

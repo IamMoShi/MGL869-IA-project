@@ -1,0 +1,57 @@
+receivers:
+  otlp:                       
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+  batch:
+    timeout: 1s
+  resource:
+    attributes:
+      - key: ETS.Project
+        value: "Data"
+        action: insert
+
+exporters:
+  logging:
+    loglevel: info # debug, info, warn, error
+  otlp/jaeger:
+    endpoint: jaeger:4317   # Jaeger is the container’s name in docker-compose.
+    tls:
+      insecure: true
+  otlphttp/loki:                        
+    endpoint: http://loki:3100/otlp
+    tls:
+      insecure: true
+  prometheus:
+    endpoint: otel-collector-gateway:8889   # Exports metrics sent by services in Prometheus format ready to scrape by prometheus
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+ 
+extensions:
+ health_check:
+ pprof:
+   endpoint: :1888    # Exposes pprof for debugging
+ zpages:
+   endpoint: :55679   # Exposes zPages for debugging
+
+service:
+  extensions: [pprof, zpages, health_check]
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, otlphttp/loki]  
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging,prometheus]  
+    traces:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [logging,otlp/tempo,otlp/jaeger]

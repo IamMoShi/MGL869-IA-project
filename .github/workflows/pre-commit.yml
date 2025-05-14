@@ -27,6 +27,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install -r requirements.dev.txt
+          pip install -r ia-api/requirements.ia-api.txt
 
       - name: Install pre-commit
         run: pip install pre-commit

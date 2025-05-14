@@ -19,7 +19,7 @@ metricbeat.modules:
   hosts: ${LOGSTASH_HOSTS}
 
 - module: kibana
-  metricsets: 
+  metricsets:
     - stats
   period: 10s
   hosts: ${KIBANA_HOSTS}
@@ -55,4 +55,3 @@ output.elasticsearch:
   ssl:
     enabled: true
     certificate_authorities: ${CA_CERT}
-

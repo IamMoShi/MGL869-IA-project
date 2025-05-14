@@ -8,8 +8,8 @@ cache:
     writeback_goroutines: 5
   caches:
   - roles:
-    - frontend-search  
-    memcached: 
+    - frontend-search
+    memcached:
       host: memcached:11211
 
 query_frontend:
@@ -20,18 +20,18 @@ query_frontend:
     duration_slo: 5s
 
 distributor:
-  receivers:                         
+  receivers:
     otlp:
       protocols:
         http:
         grpc:
 
 ingester:
-  max_block_duration: 5m             
+  max_block_duration: 5m
 
 compactor:
   compaction:
-    block_retention: 1h              
+    block_retention: 1h
 
 metrics_generator:
   registry:
@@ -48,15 +48,14 @@ metrics_generator:
 
 storage:
   trace:
-    backend: local                   
+    backend: local
     wal:
-      path: /var/tempo/wal           
+      path: /var/tempo/wal
     local:
       path: /var/tempo/blocks
 
 overrides:
   defaults:
     metrics_generator:
-      processors: [service-graphs, span-metrics, local-blocks] 
-      generate_native_histograms: classic  
-    
+      processors: [service-graphs, span-metrics, local-blocks]
+      generate_native_histograms: classic

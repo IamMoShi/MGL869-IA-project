@@ -18,7 +18,7 @@ xpack.fleet.agentPolicies:
   - name: Fleet-Server-Policy
     id: fleet-server-policy
     namespace: default
-    monitoring_enabled: 
+    monitoring_enabled:
       - logs
       - metrics
     package_policies:

@@ -60,14 +60,14 @@ services:
     volumes:
       - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'  
+      - '--config.file=/etc/prometheus/prometheus.yml'
       - '--query.lookback-delta=5s'
       - '--web.enable-remote-write-receiver'  # Enable remote write receiver
     ports:
       - "9090:9090"
     restart: on-failure
     depends_on:
-      - collector-gateway 
+      - collector-gateway
 
   grafana:
     image: grafana/grafana-enterprise # :10.3.10
@@ -76,7 +76,7 @@ services:
     ports:
       - "3010:3000"
     volumes:
-      - ./observability/grafana-storage:/var/lib/grafana     
+      - ./observability/grafana-storage:/var/lib/grafana
 
   # Uses to setup ELK stack
   setup:
@@ -386,7 +386,7 @@ volumes:
   filebeatdata01:
     driver: local
   logstashdata01:
-    driver: local 
+    driver: local
   fleetserverdata:
     driver: local
 

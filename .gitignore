@@ -7,3 +7,4 @@
 node_modules/
 mvc_demo.sqlite
 observability/grafana-storage/
+tempo-data/blocks/tempo_cluster_seed.json

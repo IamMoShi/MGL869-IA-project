@@ -13,3 +13,5 @@
 
 - Prometheus: `http://localhost:9090/`
 - Grafana:  `http://localhost:3010/`
+- Kibana: `https://localhost:5601/`
+    Username=elastic / Password=changeme

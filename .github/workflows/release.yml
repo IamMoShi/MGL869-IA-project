@@ -40,5 +40,5 @@ jobs:
     - name: Build and push ai-api image
       run: |
         IMAGE_NAME=ghcr.io/${{ env.REPO_LC }}/ia-api:${{ env.VERSION }}
-        docker build -t $IMAGE_NAME ./ai-api
+        docker build -t $IMAGE_NAME ./ia-api
         docker push $IMAGE_NAME

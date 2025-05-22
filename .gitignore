@@ -5,6 +5,9 @@
 .vscode/settings.json
 .venv/
 node_modules/
+Compiled-HTML/
 mvc_demo.sqlite
 observability/grafana-storage/
 tempo-data/blocks/tempo_cluster_seed.json
+
+logstash_ingest_data/

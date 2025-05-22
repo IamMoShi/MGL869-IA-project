@@ -25,6 +25,20 @@ services:
     volumes:
       - ./web-server/databases:/web-server/databases
 
+  # Storage (similar to S3 of AWS)
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Admin panel
+    volumes:
+      - minio-data:/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+
  # Collector
   collector-gateway:
     image: otel/opentelemetry-collector:0.110.0     # Always specify the desired version to avoid breaking changes!!
@@ -388,6 +402,8 @@ volumes:
   logstashdata01:
     driver: local
   fleetserverdata:
+    driver: local
+  minio-data:
     driver: local
 
 networks:

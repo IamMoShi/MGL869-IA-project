@@ -3,6 +3,7 @@ const passport = require('passport');
 const session = require('express-session');
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
+const uploadRoutes = require('./routes/upload');
 const db = require('./db.js');
 const { init: initAuth } = require('./auth');
 const path = require('path')
@@ -27,6 +28,7 @@ app.use(passport.session());
 
 app.use('/', authRoutes);
 app.use('/', dashboardRoutes);
+app.use('/', uploadRoutes);
 
 db.sync({ force: false })
   .then(() => {

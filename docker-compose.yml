@@ -24,7 +24,7 @@ services:
       - ./web-server/.env
     volumes:
       - ./web-server/databases:/web-server/databases
-      - ./web-server/app/views:/web-server/app/views
+      - ./web-server/app/:/web-server/app/
 
   # Storage (similar to S3 of AWS)
   minio:

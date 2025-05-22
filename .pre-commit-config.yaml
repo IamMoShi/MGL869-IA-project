@@ -57,7 +57,7 @@ repos:
     hooks:
       - id: codespell
         args: [
-          "--skip", "*.po,*.json,.venv",
+          "--skip", "*.pug,*.po,*.json,.venv",
           "--ignore-words=.codespell.ignore"
         ]
         exclude: .vale

@@ -24,6 +24,7 @@ services:
       - ./web-server/.env
     volumes:
       - ./web-server/databases:/web-server/databases
+      - ./web-server/app/views:/web-server/app/views
 
   # Storage (similar to S3 of AWS)
   minio:
@@ -53,7 +54,7 @@ services:
       - "13133:13133"       # health_check extension
       - "4317:4317"         # OTLP gRPC receiver
       - "4318:4318"         # OTLP HTTP receiver
-      - "55679:55679"       # zpages extension
+      - "4319:55679"        # zpages extension
 
   # Loki to collect logs
   loki:
@@ -310,7 +311,6 @@ services:
       - certs:/usr/share/logstash/certs
       - logstashdata01:/usr/share/logstash/data
       - "./logstash_ingest_data/:/usr/share/logstash/ingest_data/"
-      #- "./apigateway/:/apigateway/"
       - "./observability/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro"
     environment:
       - xpack.monitoring.enabled=false

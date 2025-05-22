@@ -2,5 +2,12 @@ extends layout.pug
 
 block content
   .container
-    h4 Dashboard
-    span Only authenticated users can view this dashboard view.
+    h1 Tableau de Bord - SmartVue Photos
+    br
+    h2 Sélection des images à trier
+
+    form(action="/upload" method="post" enctype="multipart/form-data")
+      label(for="fileInput") Sélection des fichiers:
+      input#fileInput(type="file" name="Fichiers" multiple)
+      br
+      button(type="submit") Trier les photos

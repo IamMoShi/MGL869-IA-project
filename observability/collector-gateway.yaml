@@ -38,7 +38,7 @@ extensions:
  pprof:
    endpoint: :1888    # Exposes pprof for debugging
  zpages:
-   endpoint: :55679   # Exposes zPages for debugging
+   endpoint: :4319    # Exposes zPages for debugging
 
 service:
   extensions: [pprof, zpages, health_check]

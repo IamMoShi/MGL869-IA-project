@@ -1,28 +1,26 @@
-const path = require('path');
-const fs = require('fs');
-const s3 = require('../services/minioClient');
-const uploadSF = require('../models/bucket');
-const http = require('http');
-const axios = require('axios');
-const FormData = require('form-data');
 
-const DESTINATION_URL = 'http:/ia-api:8000/api/v1/analyze/predict';
+const uploadSF = require('../models/bucket');
+const {wlogger, createMessage} = require('../winstonlogger.js');
+
+const MODULE = 'upload.js';
 
 module.exports = async function uploadImage(req, res) {
-
-  if (!req.file)
-    return res.status(400).json({ error: "Aucune image reçue" });
+  if (!req.file) {
+    erreur = "Aucune image reçue";
+    wlogger.error(createMessage( Date.now(), 'PARAM_MISSING', MODULE, '/uploadImage', '', '', 'Aucune image reçue'));
+    return res.status(400).json({ error: erreur });
+  }
 
   try {
   
     // Save the image to a temporary location
     await uploadSF.uploadSingleFile(req, res);
-    
+        
+    wlogger.info(createMessage( Date.now(), 'SUCCESS', MODULE, '/uploadImage', '', '', 'Image uploadé avec succès'));
     res.status(200).json({ error: "Succès de l'upload" });
-    
   }
   catch (err) {
-    console.error(err);
+    wlogger.error(createMessage( Date.now(), 'CATCH_ERR', MODULE, '/uploadImage', '', '', 'Une exception a été attrappée durant le upload'));
     res.status(500).json({ error: "Échec de l'upload" });
   }
 

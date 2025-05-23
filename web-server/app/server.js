@@ -10,8 +10,11 @@ const { init: initAuth } = require('./auth');
 const path = require('path')
 const env = require('dotenv').config();
 
+const {wlogger, createMessage} = require('./winstonlogger.js');
+
 const app = express();
 const PORT = 8080;
+
 
 app.use(express.urlencoded({extended: false}));
 app.set('view engine', 'pug');
@@ -36,3 +39,6 @@ db.sync({ force: false })
   .then(() => {
     app.listen(PORT, console.log('Server is running on port: ' + PORT));
   });
+
+wlogger.info(createMessage( Date.now(), 'SUCCESS', 'Web-Server', 'server.js', '', '', 'Web-Server démarré avec succès'));
+

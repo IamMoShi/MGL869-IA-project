@@ -15,3 +15,5 @@ logstash_ingest_data/
 package-lock.json
 
 package.json
+
+web-server/logs/

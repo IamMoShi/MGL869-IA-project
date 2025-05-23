@@ -4,9 +4,21 @@ const s3 = require('../services/minioClient');
 
 module.exports = async function uploadImage(req, res) {
   if (!req.file) return res.status(400).json({ error: "Aucune image reçue" });
+  
+  console.log("Image reçue :", req.file.originalname);
 
   const localPath = req.file.path;
-  const filename = `${Date.now()}_${req.file.originalname}`;
+  console.log("Chemin local de l'image :", localPath);
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  const dateStr = `${yyyy}-${mm}-${dd}_${hh}-${min}-${ss}`;
+  const filename = `${dateStr}_${req.file.originalname}`;
+  console.log("Nom de l'image :", filename);
   const bucket = "images";
 
   try {

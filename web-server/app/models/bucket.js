@@ -35,10 +35,6 @@ module.exports = {
         const data = await s3.upload(params).promise();
 
         fs.unlinkSync(localPath);
-
-         res.status(200).json({
-            message: "Upload réussi",
-            location: data.Location,
-    });
+ 
     }
 }

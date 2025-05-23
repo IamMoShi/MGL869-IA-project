@@ -2,14 +2,23 @@ extends layout.pug
 
 block content
   .container
-    h1 SmartVue Photos v0.1
+    h1 SmartVue Photos
     br
-    h2 Sélection des images à trier
+    h2 Upload d'une image dans le bucket
     br
     form(action="/upload" method="post" enctype="multipart/form-data")
-      label(for="fileInput") Sélection du fichier:
+      label(for="fileInput") Sélection du fichier à uploader:
       br
       input#fileInput(type="file" name="file")
       br
       br
-      button(type="submit") Trier la photo
+      button(type="submit") Upload
+    br
+    h2 Prédiction d'une image 
+    form(action="/predictimage" method="post" enctype="multipart/form-data")
+      label(for="fileInput") Sélection de l'image à prédire:
+      br
+      input#fileInput(type="file" name="file")
+      br
+      br
+      button(type="submit") Prédire

@@ -15,35 +15,11 @@ module.exports = async function uploadImage(req, res) {
 
   try {
   
-    const fileBuffer = req.file.buffer; // Buffer of the uploaded file
-
-    const imagePath = req.file.path; // e.g. './uploads/abcdef.jpg'
-    const filename = req.file.originalname;
-    const tempFilePath = path.join(imagePath, filename);
-    const mimeType = req.file.mimetype;
-
-    const fileContent = fs.readFileSync(imagePath);
-
-    const form = new FormData();
-    form.append('file', fileContent, {
-      filename: filename,
-      contentType: mimeType
-    });
-
-    const response = await axios.post(DESTINATION_URL, form, {
-      headers: {
-        ...form.getHeaders()
-      }
-    });
-
-    res.status(response.status).json(response.data);
-    
-    fs.unlinkSync(imagePath);
-
     // Save the image to a temporary location
-    // await uploadSF.uploadSingleFile(req, res);
-   
-  
+    await uploadSF.uploadSingleFile(req, res);
+    
+    res.status(200).json({ error: "Succès de l'upload" });
+    
   }
   catch (err) {
     console.error(err);

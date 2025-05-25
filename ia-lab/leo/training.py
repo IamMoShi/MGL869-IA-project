@@ -135,87 +135,91 @@ class EarlyStopping:
 
 def train(model_name):
     NUM_CLASSES = 6
-    model = timm.create_model(model_name, pretrained=True, num_classes=NUM_CLASSES)
-    model = model.to(DEVICE)
-
-    train_df, val_df = train_test_split(df, test_size=0.2, stratify=df['label'])
+    N_SPLITS = 5
+    skf = StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=42)
 
     transform = A.Compose([A.Resize(224, 224), A.ToTensorV2()])
 
-    train_dataset = ImageDatasetFromDF(train_df, transform=transform)
-    val_dataset = ImageDatasetFromDF(val_df, transform=transform)
+    for fold, (train_idx, val_idx) in enumerate(skf.split(df['image_path'], df['label'])):
+        print(f"\n🔁 Fold {fold + 1}/{N_SPLITS}")
 
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, drop_last=True)
-    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, drop_last=True)
+        train_df = df.iloc[train_idx].reset_index(drop=True)
+        val_df = df.iloc[val_idx].reset_index(drop=True)
 
-    optimizer = optim.Adam(model.parameters(), lr=1e-4, weight_decay=0.008835)
-    criterion = nn.CrossEntropyLoss()
+        model = timm.create_model(model_name, pretrained=True, num_classes=NUM_CLASSES)
+        model = model.to(DEVICE)
 
-    EPOCHS = 50
-    early_stopper = EarlyStopping(patience=3)
+        train_dataset = ImageDatasetFromDF(train_df, transform=transform)
+        val_dataset = ImageDatasetFromDF(val_df, transform=transform)
 
-    best_val_loss = float('inf')
-    best_model_state = None
+        train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, drop_last=True)
+        val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, drop_last=True)
 
-    for epoch in range(EPOCHS):
-        model.train()
-        running_loss = 0.0
-        correct = 0
-        total = 0
+        optimizer = optim.Adam(model.parameters(), lr=1e-4, weight_decay=0.008835)
+        criterion = nn.CrossEntropyLoss()
+        early_stopper = EarlyStopping(patience=3)
 
-        for images, labels in tqdm(train_loader):
-            images, labels = images.to(DEVICE), labels.to(DEVICE)
+        EPOCHS = 50
+        best_val_loss = float('inf')
+        best_model_state = None
 
-            optimizer.zero_grad()
-            outputs = model(images)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
+        for epoch in range(EPOCHS):
+            model.train()
+            running_loss = 0.0
+            correct = 0
+            total = 0
 
-            running_loss += loss.item() * images.size(0)
-            _, predicted = outputs.max(1)
-            correct += predicted.eq(labels).sum().item()
-            total += labels.size(0)
-
-        acc = correct / total
-        epoch_loss = running_loss / total
-        print(f"Epoch {epoch + 1}/{EPOCHS} | Train Loss: {epoch_loss:.4f} | Train Acc: {acc:.4f}")
-
-        # Validation
-        model.eval()
-        val_loss = 0.0
-        val_correct = 0
-        val_total = 0
-        with torch.no_grad():
-            for images, labels in val_loader:
+            for images, labels in tqdm(train_loader, desc=f"Fold {fold+1} Epoch {epoch+1}/{EPOCHS}"):
                 images, labels = images.to(DEVICE), labels.to(DEVICE)
+
+                optimizer.zero_grad()
                 outputs = model(images)
                 loss = criterion(outputs, labels)
-                val_loss += loss.item() * images.size(0)
+                loss.backward()
+                optimizer.step()
+
+                running_loss += loss.item() * images.size(0)
                 _, predicted = outputs.max(1)
-                val_correct += predicted.eq(labels).sum().item()
-                val_total += labels.size(0)
+                correct += predicted.eq(labels).sum().item()
+                total += labels.size(0)
 
-        val_loss /= val_total
-        val_acc = val_correct / val_total
-        print(f"→ Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f}")
+            acc = correct / total
+            epoch_loss = running_loss / total
+            print(f"→ Train Loss: {epoch_loss:.4f} | Train Acc: {acc:.4f}")
 
-        # Sauvegarde du meilleur modèle
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            best_model_state = model.state_dict()
+            # Validation
+            model.eval()
+            val_loss = 0.0
+            val_correct = 0
+            val_total = 0
+            with torch.no_grad():
+                for images, labels in val_loader:
+                    images, labels = images.to(DEVICE), labels.to(DEVICE)
+                    outputs = model(images)
+                    loss = criterion(outputs, labels)
+                    val_loss += loss.item() * images.size(0)
+                    _, predicted = outputs.max(1)
+                    val_correct += predicted.eq(labels).sum().item()
+                    val_total += labels.size(0)
 
-        # Vérifie early stopping
-        early_stopper(val_loss)
-        if early_stopper.early_stop:
-            print(f"🛑 Arrêt anticipé à l'époque {epoch+1}")
-            break
+            val_loss /= val_total
+            val_acc = val_correct / val_total
+            print(f"→ Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f}")
 
-    # Charger le meilleur modèle sauvegardé
-    if best_model_state:
-        model.load_state_dict(best_model_state)
-        torch.save(model.state_dict(), f"{model_name}_best.pth")
-        print(f"✅ Meilleur modèle sauvegardé dans {model_name}_best.pth")
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                best_model_state = model.state_dict()
+
+            early_stopper(val_loss)
+            if early_stopper.early_stop:
+                print(f"🛑 Early stop at epoch {epoch+1}")
+                break
+
+        # Sauvegarde du meilleur modèle de ce fold
+        if best_model_state:
+            model.load_state_dict(best_model_state)
+            torch.save(model.state_dict(), f"{model_name}_fold{fold+1}_best.pth")
+            print(f"✅ Best model saved: {model_name}_fold{fold+1}_best.pth")
 
 if __name__ == "__main__":
     from dataset_file_manager import load

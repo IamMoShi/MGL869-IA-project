@@ -17,3 +17,7 @@ package-lock.json
 package.json
 
 web-server/logs/
+/ia-lab/leo/augmented_output/
+/ia-lab/leo/normalized_dataset/
+/ia-lab/leo/datasets/
+/ia-lab/leo/augmented_dataset/

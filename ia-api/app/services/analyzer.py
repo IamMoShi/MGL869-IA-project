@@ -10,7 +10,7 @@ from fastapi import UploadFile
 CLASSES = ["buildings", "forest", "glacier", "mountain", "sea", "street"]
 
 transform = transforms.Compose([
-    transforms.Resize((224, 224)),   # Taille à adapter à ton modèle
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize(
         mean=[0.485, 0.456, 0.406],  # ImageNet standard

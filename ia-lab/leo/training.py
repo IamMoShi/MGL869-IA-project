@@ -1,3 +1,5 @@
+import time
+
 import cv2
 import optuna
 import pandas as pd
@@ -11,6 +13,7 @@ from tqdm import tqdm
 from sklearn.model_selection import StratifiedKFold
 import numpy as np
 from sklearn.model_selection import train_test_split
+from collections import defaultdict
 
 all_models = timm.list_models(["mobilenet*r224*", "resnet*r224*", ], pretrained=True)
 print("-" + "\n-".join(all_models) + "\n", len(all_models))
@@ -140,6 +143,8 @@ def train(model_name):
 
     transform = A.Compose([A.Resize(224, 224), A.ToTensorV2()])
 
+    all_metrics = []
+
     for fold, (train_idx, val_idx) in enumerate(skf.split(df['image_path'], df['label'])):
         print(f"\n🔁 Fold {fold + 1}/{N_SPLITS}")
 
@@ -163,6 +168,10 @@ def train(model_name):
         best_val_loss = float('inf')
         best_model_state = None
 
+        # 💾 Initialisation métriques
+        fold_metrics = defaultdict(list)
+        start_time = time.time()
+
         for epoch in range(EPOCHS):
             model.train()
             running_loss = 0.0
@@ -183,9 +192,9 @@ def train(model_name):
                 correct += predicted.eq(labels).sum().item()
                 total += labels.size(0)
 
-            acc = correct / total
-            epoch_loss = running_loss / total
-            print(f"→ Train Loss: {epoch_loss:.4f} | Train Acc: {acc:.4f}")
+            train_acc = correct / total
+            train_loss = running_loss / total
+            print(f"→ Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.4f}")
 
             # Validation
             model.eval()
@@ -206,6 +215,12 @@ def train(model_name):
             val_acc = val_correct / val_total
             print(f"→ Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f}")
 
+            # Enregistrement des métriques
+            fold_metrics["train_loss"].append(train_loss)
+            fold_metrics["train_acc"].append(train_acc)
+            fold_metrics["val_loss"].append(val_loss)
+            fold_metrics["val_acc"].append(val_acc)
+
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
                 best_model_state = model.state_dict()
@@ -215,11 +230,28 @@ def train(model_name):
                 print(f"🛑 Early stop at epoch {epoch+1}")
                 break
 
+        end_time = time.time()
+        fold_metrics["epochs_done"] = epoch + 1
+        fold_metrics["training_time_sec"] = end_time - start_time
+        fold_metrics["best_val_loss"] = best_val_loss
+        fold_metrics["best_val_acc"] = max(fold_metrics["val_acc"])
+
+        all_metrics.append(fold_metrics)
+
         # Sauvegarde du meilleur modèle de ce fold
         if best_model_state:
             model.load_state_dict(best_model_state)
             torch.save(model.state_dict(), f"{model_name}_fold{fold+1}_best.pth")
             print(f"✅ Best model saved: {model_name}_fold{fold+1}_best.pth")
+
+    # 📊 Résumé global
+    for i, m in enumerate(all_metrics):
+        print(f"\n📄 Fold {i+1} Summary:")
+        print(f"  ⏱️  Time: {m['training_time_sec']:.2f}s")
+        print(f"  🔁 Epochs: {m['epochs_done']}")
+        print(f"  🏆 Best Val Loss: {m['best_val_loss']:.4f}")
+        print(f"  🥇 Best Val Acc: {m['best_val_acc']:.4f}")
+
 
 if __name__ == "__main__":
     from dataset_file_manager import load

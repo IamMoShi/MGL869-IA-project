@@ -1,9 +1,7 @@
-import io
-
 from app.services.analyzer import predict_from_bytes
 from fastapi import APIRouter, File, HTTPException, UploadFile
-from fastapi.responses import StreamingResponse
 from app.core.minio import s3_client, BUCKET_NAME
+from aiocache import cached, SimpleMemoryCache
 
 router = APIRouter()
 
@@ -19,15 +17,18 @@ async def predict(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@cached(ttl=3600, cache=SimpleMemoryCache)  # Can be updated to use RedisCache or another cache for distributed caching
+async def get_prediction_from_s3(filename: str):
+    s3_object = s3_client.get_object(Bucket=BUCKET_NAME, Key=filename)
+    image_bytes = s3_object["Body"].read()
+    return await predict_from_bytes(image_bytes)
+
 @router.get("/image/{filename}")
-def get_image(filename: str):
+async def analyze_image(filename: str):
     try:
-        s3_object = s3_client.get_object(Bucket=BUCKET_NAME, Key=filename)
-        content_type = s3_object["ContentType"] if "ContentType" in s3_object else "image/jpeg"
-        return StreamingResponse(
-            io.BytesIO(s3_object["Body"].read()),
-            media_type=content_type
-        )
+        prediction = await get_prediction_from_s3(filename)
+        return {"filename": filename, "prediction": prediction}
     except s3_client.exceptions.NoSuchKey:
         raise HTTPException(status_code=404, detail="Image not found")
     except Exception as e:

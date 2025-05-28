@@ -67,7 +67,7 @@ def augment_dataset(df, n_aug_per_image=3, seed=42, output_dir="augmented_output
 
     # Define your augmentation pipeline here
     augment = A.Compose([
-        A.RandomResizedCrop((224, 224)),            # Random crop + resize
+        A.RandomResizedCrop((224, 224)),          # Random crop + resize
         A.HorizontalFlip(p=0.5),                  # Flip horizontally with 50% chance
         A.Rotate(limit=15),                       # Rotate image within ±15°
         A.GaussNoise(std_range=(0.05, 0.15), mean_range=(0.0, 0.0), per_channel=True, p=0.3),  # Add Gaussian noise with 30% chance

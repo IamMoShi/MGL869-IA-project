@@ -247,7 +247,7 @@ def train(model_name):
     # 📊 Résumé global
     for i, m in enumerate(all_metrics):
         print(f"\n📄 Fold {i+1} Summary:")
-        print(f"  ⏱️  Time: {m['training_time_sec']:.2f}s")
+        print(f"  ⏱️ Time: {m['training_time_sec']:.2f}s")
         print(f"  🔁 Epochs: {m['epochs_done']}")
         print(f"  🏆 Best Val Loss: {m['best_val_loss']:.4f}")
         print(f"  🥇 Best Val Acc: {m['best_val_acc']:.4f}")

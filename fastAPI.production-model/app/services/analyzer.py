@@ -4,9 +4,6 @@ import torch
 from PIL import Image
 from torchvision import transforms
 
-from app.utils.image_tools import load_image
-from fastapi import UploadFile
-
 CLASSES = ["buildings", "forest", "glacier", "mountain", "sea", "street"]
 
 transform = transforms.Compose([

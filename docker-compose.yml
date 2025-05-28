@@ -1,13 +1,31 @@
 services:
-  ia-api:
+  fastapi-production-model:
     build:
-      context: ./ia-api
+      context: fastAPI.production-model
       dockerfile: Dockerfile
-    container_name: ia-api
+    container_name: fastapi-production-model
     ports:
-      - "8000:8000"
-    volumes:
-      - ./ia-api:/ia-api
+      - "5000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  fastapi-data-processing:
+    build:
+      context: fastAPI.data-processing
+      dockerfile: Dockerfile
+    container_name: fastAPI-data-processing
+    ports:
+      - "5010:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  fastapi-model-training:
+    build:
+      context: fastAPI.model-training
+      dockerfile: Dockerfile
+    container_name: fastapi-model-training
+    ports:
+      - "5020:8000"
     environment:
       - PYTHONUNBUFFERED=1
 
@@ -32,14 +50,19 @@ services:
     image: minio/minio
     container_name: minio
     ports:
-      - "9000:9000"   # S3 API
-      - "9001:9001"   # Admin panel
+      - "9000:9000"
+      - "9001:9001"
     volumes:
       - minio-data:/data
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
  # Collector
   collector-gateway:
@@ -56,6 +79,20 @@ services:
       - "4317:4317"         # OTLP gRPC receiver
       - "4318:4318"         # OTLP HTTP receiver
       - "4319:55679"        # zpages extension
+
+
+  postgres:
+    image: postgres:15
+    container_name: my_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   # Loki to collect logs
   loki:
@@ -405,6 +442,8 @@ volumes:
   fleetserverdata:
     driver: local
   minio-data:
+    driver: local
+  pgdata:
     driver: local
 
 networks:

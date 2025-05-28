@@ -1,0 +1,8 @@
+uvicorn==0.34.2
+fastapi==0.115.12
+pillow==11.2.1
+python-multipart==0.0.20
+pydantic-settings==2.9.1
+torch==2.7.0
+torchvision==0.22.0
+boto3==1.38.23

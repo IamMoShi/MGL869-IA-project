@@ -1,7 +1,7 @@
+from aiocache import SimpleMemoryCache, cached
+from app.core.minio import BUCKET_NAME, s3_client
 from app.services.analyzer import predict_from_bytes
 from fastapi import APIRouter, File, HTTPException, UploadFile
-from app.core.minio import s3_client, BUCKET_NAME
-from aiocache import cached, SimpleMemoryCache
 
 router = APIRouter()
 
@@ -18,11 +18,14 @@ async def predict(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@cached(ttl=3600, cache=SimpleMemoryCache)  # Can be updated to use RedisCache or another cache for distributed caching
+@cached(
+    ttl=3600, cache=SimpleMemoryCache
+)  # Can be updated to use RedisCache or another cache for distributed caching
 async def get_prediction_from_s3(filename: str):
     s3_object = s3_client.get_object(Bucket=BUCKET_NAME, Key=filename)
     image_bytes = s3_object["Body"].read()
     return await predict_from_bytes(image_bytes)
+
 
 @router.get("/image/{filename}")
 async def analyze_image(filename: str):

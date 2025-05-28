@@ -14,7 +14,7 @@ module.exports = async function predictImage(req, res) {
     return res.status(400).json({ error: "Aucune image reçue" });
 
   try {
-  
+
     const imagePath = req.file.path; // e.g. './uploads/abcdef.jpg'
     const filename = req.file.originalname;
     const mimeType = req.file.mimetype;
@@ -31,11 +31,11 @@ module.exports = async function predictImage(req, res) {
         ...form.getHeaders()
       }
     });
-    
+
     fs.unlinkSync(imagePath);
 
     res.status(response.status).json(response.data);
-  
+
   }
   catch (err) {
     console.error(err);

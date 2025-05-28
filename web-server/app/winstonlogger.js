@@ -46,10 +46,9 @@ function getWLogger() {
 const wlogger = getWLogger();
 wlogger.info(createMessage( Date.now(), 'SUCCESS', 'WinstonLogger', '', '', '', 'Winston logger créé avec succès'));
 
-module.exports = 
+module.exports =
 {
   createLogger,
   createMessage,
   wlogger,
 };
-

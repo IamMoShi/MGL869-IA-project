@@ -22,7 +22,7 @@ module.exports = {
         const filename = `${dateStr}_${req.file.originalname}`;
         console.log("Nom de l'image :", filename);
         const bucket = "images";
-    
+
         const fileContent = fs.readFileSync(localPath);
 
         const params = {
@@ -35,6 +35,6 @@ module.exports = {
         const data = await s3.upload(params).promise();
 
         fs.unlinkSync(localPath);
- 
+
     }
 }

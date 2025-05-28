@@ -6,3 +6,8 @@ pydantic-settings==2.9.1
 torch==2.7.0
 torchvision==0.22.0
 boto3==1.38.23
+alembic==1.16.1
+SQLAlchemy==2.0.41
+asyncpg==0.30.0
+opencv-python-headless==4.11.0.86
+albumentations==2.0.8

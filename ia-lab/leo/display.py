@@ -1,11 +1,16 @@
-import matplotlib.pyplot as plt
 import cv2
+import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def show_category_representatives(df: pd.DataFrame, image_column="image_path", label_column="label", n_per_class=5):
-    """
-    Displays n representative images per class from a DataFrame of image paths.
+def show_category_representatives(
+    df: pd.DataFrame,
+    image_column="image_path",
+    label_column="label",
+    n_per_class=5,
+):
+    """Displays n representative images per class from a DataFrame of image
+    paths.
 
     Args:
         df (pd.DataFrame): DataFrame with image paths and labels
@@ -27,7 +32,7 @@ def show_category_representatives(df: pd.DataFrame, image_column="image_path", l
                 continue
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             ax.imshow(img)
-            ax.axis('off')
+            ax.axis("off")
 
         plt.tight_layout()
         plt.show()

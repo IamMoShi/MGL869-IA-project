@@ -4,6 +4,7 @@ services:
       context: fastAPI.production-model
       dockerfile: Dockerfile
     container_name: fastapi-production-model
+    restart: no
     ports:
       - "5000:8000"
     environment:
@@ -14,16 +15,22 @@ services:
       context: fastAPI.data-processing
       dockerfile: Dockerfile
     container_name: fastAPI-data-processing
+    restart: no
     ports:
       - "5010:8000"
+    env_file:
+      - ./fastAPI.data-processing/.env
     environment:
       - PYTHONUNBUFFERED=1
+    depends_on:
+      - postgres
 
   fastapi-model-training:
     build:
       context: fastAPI.model-training
       dockerfile: Dockerfile
     container_name: fastapi-model-training
+    restart: no
     ports:
       - "5020:8000"
     environment:
@@ -34,6 +41,7 @@ services:
       context: ./web-server
       dockerfile: Dockerfile
     container_name: web-server
+    restart: no
     ports:
       - "8080:8080"
     environment:
@@ -49,6 +57,7 @@ services:
   minio:
     image: minio/minio
     container_name: minio
+    restart: no
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -68,6 +77,7 @@ services:
   collector-gateway:
     image: otel/opentelemetry-collector:0.110.0     # Always specify the desired version to avoid breaking changes!!
     container_name: otel-collector-gateway
+    restart: no
     volumes:
       - ./observability/collector-gateway.yaml:/etc/collector-gateway.yaml
     command: [ "--config=/etc/collector-gateway.yaml" ]
@@ -82,9 +92,9 @@ services:
 
 
   postgres:
-    image: postgres:15
-    container_name: my_postgres
-    restart: unless-stopped
+    image: postgres:17
+    container_name: postgres
+    restart: no
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -100,7 +110,7 @@ services:
     container_name: loki
     ports:
       - "3100:3100"        # HTTP port to receive logs data from the OTEL Collector
-    restart: on-failure
+    restart: no
     volumes:
       - ./observability/loki-config.yaml:/etc/loki/loki-config.yaml
     command: [ "--config.file=/etc/loki/loki-config.yaml" ]
@@ -118,14 +128,14 @@ services:
       - '--web.enable-remote-write-receiver'  # Enable remote write receiver
     ports:
       - "9090:9090"
-    restart: on-failure
+    restart: no
     depends_on:
       - collector-gateway
 
   grafana:
     image: grafana/grafana-enterprise # :10.3.10
     container_name: grafana
-    restart: unless-stopped
+    restart: no
     ports:
       - "3010:3000"
     volumes:
@@ -200,6 +210,7 @@ services:
         condition: service_healthy
     image: docker.elastic.co/elasticsearch/elasticsearch:8.16.1
     container_name: es01
+    restart: no
     labels:
       co.elastic.logs/module: elasticsearch
     volumes:
@@ -245,6 +256,7 @@ services:
         condition: service_healthy
     image: docker.elastic.co/kibana/kibana:8.16.1
     container_name: kibana
+    restart: no
     labels:
       co.elastic.logs/module: kibana
     volumes:
@@ -287,6 +299,7 @@ services:
         condition: service_healthy
     image: docker.elastic.co/beats/metricbeat:8.16.1
     container_name: metricbeat01
+    restart: no
     user: root
     volumes:
       - certs:/usr/share/metricbeat/certs
@@ -316,6 +329,7 @@ services:
         condition: service_healthy
     image: docker.elastic.co/beats/filebeat:8.16.1
     container_name: filebeat01
+    restart: no
     user: root
     volumes:
       - certs:/usr/share/filebeat/certs
@@ -342,6 +356,7 @@ services:
         condition: service_healthy
     image: docker.elastic.co/logstash/logstash:8.16.1
     container_name: logstash01
+    restart: no
     labels:
       co.elastic.logs/module: logstash
     user: root
@@ -364,6 +379,7 @@ services:
         condition: service_healthy
     image: docker.elastic.co/beats/elastic-agent:8.16.1
     container_name: fleet-server
+    restart: no
     volumes:
       - certs:/certs
       - fleetserverdata:/usr/share/elastic-agent
@@ -414,6 +430,7 @@ services:
     image: *tempoImage
     container_name: tempo
     command: [ "-config.file=/etc/tempo.yaml" ]
+    restart: no
     volumes:
       - ./observability/tempo.yaml:/etc/tempo.yaml
       - ./tempo-data:/var/tempo

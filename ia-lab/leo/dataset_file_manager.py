@@ -5,8 +5,8 @@ import pandas as pd
 
 
 def load(path: str) -> pd.DataFrame:
-    """
-    Loads images from directories in a DataFrame.
+    """Loads images from directories in a DataFrame.
+
     :param path: Directory containing the images
     :return:
     """
@@ -33,6 +33,7 @@ def load(path: str) -> pd.DataFrame:
     df = pd.DataFrame(data)
 
     return df
+
 
 if __name__ == "__main__":
     # Example usage

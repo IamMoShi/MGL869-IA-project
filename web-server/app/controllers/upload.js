@@ -12,10 +12,10 @@ module.exports = async function uploadImage(req, res) {
   }
 
   try {
-  
+
     // Save the image to a temporary location
     await uploadSF.uploadSingleFile(req, res);
-        
+
     wlogger.info(createMessage( Date.now(), 'SUCCESS', MODULE, '/uploadImage', '', '', 'Image uploadé avec succès'));
     res.status(200).json({ error: "Succès de l'upload" });
   }

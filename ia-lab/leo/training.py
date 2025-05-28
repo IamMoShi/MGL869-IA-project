@@ -1,21 +1,26 @@
 import time
+from collections import defaultdict
 
+import albumentations as A
 import cv2
+import numpy as np
 import optuna
 import pandas as pd
 import timm
 import torch
-import albumentations as A
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
+from sklearn.model_selection import StratifiedKFold, train_test_split
+from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
-from sklearn.model_selection import StratifiedKFold
-import numpy as np
-from sklearn.model_selection import train_test_split
-from collections import defaultdict
 
-all_models = timm.list_models(["mobilenet*r224*", "resnet*r224*", ], pretrained=True)
+all_models = timm.list_models(
+    [
+        "mobilenet*r224*",
+        "resnet*r224*",
+    ],
+    pretrained=True,
+)
 print("-" + "\n-".join(all_models) + "\n", len(all_models))
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -24,14 +29,23 @@ print("Using device:", DEVICE)
 
 # Dataset for preprocessed image paths + labels
 class ImageDatasetFromDF(Dataset):
-    def __init__(self, df: pd.DataFrame, label_column="label", image_column="image_path", transform=None):
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        label_column="label",
+        image_column="image_path",
+        transform=None,
+    ):
         self.df = df.reset_index(drop=True)
         self.transform = transform
         self.image_column = image_column
         self.label_column = label_column
 
         # Encode string labels to integers
-        self.label_to_index = {label: i for i, label in enumerate(sorted(df[label_column].unique()))}
+        self.label_to_index = {
+            label: i
+            for i, label in enumerate(sorted(df[label_column].unique()))
+        }
         self.df["label_index"] = self.df[label_column].map(self.label_to_index)
 
     def __len__(self):
@@ -56,13 +70,17 @@ def objective_factory(model_name, df: pd.DataFrame, pretrained=True):
         lr = trial.suggest_float("lr", 1e-5, 1e-2, log=True)
         weight_decay = trial.suggest_float("weight_decay", 1e-5, 1e-2)
         batch_size = trial.suggest_categorical("batch_size", [16, 32, 64])
-        optimizer_name = trial.suggest_categorical("optimizer", ["Adam", "SGD"])
+        optimizer_name = trial.suggest_categorical(
+            "optimizer", ["Adam", "SGD"]
+        )
 
         # Predefine transform
         transform = A.Compose([A.ToTensorV2()])
 
         # Encode labels
-        label_to_index = {label: i for i, label in enumerate(sorted(df["label"].unique()))}
+        label_to_index = {
+            label: i for i, label in enumerate(sorted(df["label"].unique()))
+        }
         df_local = df.copy()
         df_local["label_index"] = df_local["label"].map(label_to_index)
 
@@ -70,31 +88,55 @@ def objective_factory(model_name, df: pd.DataFrame, pretrained=True):
         kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
         scores = []
 
-        for fold_idx, (train_idx, val_idx) in enumerate(kf.split(df_local, df_local["label_index"])):
+        for fold_idx, (train_idx, val_idx) in enumerate(
+            kf.split(df_local, df_local["label_index"])
+        ):
             print(f"\n📂 Fold {fold_idx + 1}/5")
 
             df_train = df_local.iloc[train_idx].reset_index(drop=True)
             df_val = df_local.iloc[val_idx].reset_index(drop=True)
 
-            model = timm.create_model(model_name, pretrained=pretrained, num_classes=len(label_to_index))
+            model = timm.create_model(
+                model_name,
+                pretrained=pretrained,
+                num_classes=len(label_to_index),
+            )
             model = model.to(DEVICE)
 
             train_dataset = ImageDatasetFromDF(df_train, transform=transform)
             val_dataset = ImageDatasetFromDF(df_val, transform=transform)
 
-            train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
-            val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, drop_last=True)
+            train_loader = DataLoader(
+                train_dataset,
+                batch_size=batch_size,
+                shuffle=True,
+                drop_last=True,
+            )
+            val_loader = DataLoader(
+                val_dataset,
+                batch_size=batch_size,
+                shuffle=False,
+                drop_last=True,
+            )
 
             optimizer_cls = getattr(optim, optimizer_name)
-            optimizer = optimizer_cls(model.parameters(), lr=lr, weight_decay=weight_decay)
+            optimizer = optimizer_cls(
+                model.parameters(), lr=lr, weight_decay=weight_decay
+            )
             criterion = nn.CrossEntropyLoss()
 
             n_epochs = 3
             for epoch in range(n_epochs):
                 model.train()
-                loop = tqdm(train_loader, desc=f"🧪 Fold {fold_idx + 1} | Epoch {epoch + 1}/{n_epochs}", leave=False)
+                loop = tqdm(
+                    train_loader,
+                    desc=f"🧪 Fold {fold_idx + 1} | Epoch {epoch + 1}/{n_epochs}",
+                    leave=False,
+                )
                 for images, labels in loop:
-                    images, labels = images.float().to(DEVICE), labels.to(DEVICE)
+                    images, labels = images.float().to(DEVICE), labels.to(
+                        DEVICE
+                    )
                     optimizer.zero_grad()
                     outputs = model(images)
                     loss = criterion(outputs, labels)
@@ -105,7 +147,9 @@ def objective_factory(model_name, df: pd.DataFrame, pretrained=True):
             correct = total = 0
             with torch.no_grad():
                 for images, labels in val_loader:
-                    images, labels = images.float().to(DEVICE), labels.to(DEVICE)
+                    images, labels = images.float().to(DEVICE), labels.to(
+                        DEVICE
+                    )
                     preds = model(images).argmax(dim=1)
                     correct += (preds == labels).sum().item()
                     total += labels.size(0)
@@ -119,6 +163,7 @@ def objective_factory(model_name, df: pd.DataFrame, pretrained=True):
 
     return objective
 
+
 class EarlyStopping:
     def __init__(self, patience=3, min_delta=0.0):
         self.patience = patience
@@ -128,13 +173,17 @@ class EarlyStopping:
         self.early_stop = False
 
     def __call__(self, val_loss):
-        if self.best_loss is None or val_loss < self.best_loss - self.min_delta:
+        if (
+            self.best_loss is None
+            or val_loss < self.best_loss - self.min_delta
+        ):
             self.best_loss = val_loss
             self.counter = 0
         else:
             self.counter += 1
             if self.counter >= self.patience:
                 self.early_stop = True
+
 
 def train(model_name):
     NUM_CLASSES = 6
@@ -145,27 +194,37 @@ def train(model_name):
 
     all_metrics = []
 
-    for fold, (train_idx, val_idx) in enumerate(skf.split(df['image_path'], df['label'])):
+    for fold, (train_idx, val_idx) in enumerate(
+        skf.split(df["image_path"], df["label"])
+    ):
         print(f"\n🔁 Fold {fold + 1}/{N_SPLITS}")
 
         train_df = df.iloc[train_idx].reset_index(drop=True)
         val_df = df.iloc[val_idx].reset_index(drop=True)
 
-        model = timm.create_model(model_name, pretrained=True, num_classes=NUM_CLASSES)
+        model = timm.create_model(
+            model_name, pretrained=True, num_classes=NUM_CLASSES
+        )
         model = model.to(DEVICE)
 
         train_dataset = ImageDatasetFromDF(train_df, transform=transform)
         val_dataset = ImageDatasetFromDF(val_df, transform=transform)
 
-        train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, drop_last=True)
-        val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, drop_last=True)
+        train_loader = DataLoader(
+            train_dataset, batch_size=32, shuffle=True, drop_last=True
+        )
+        val_loader = DataLoader(
+            val_dataset, batch_size=32, shuffle=False, drop_last=True
+        )
 
-        optimizer = optim.Adam(model.parameters(), lr=1e-4, weight_decay=0.008835)
+        optimizer = optim.Adam(
+            model.parameters(), lr=1e-4, weight_decay=0.008835
+        )
         criterion = nn.CrossEntropyLoss()
         early_stopper = EarlyStopping(patience=3)
 
         EPOCHS = 50
-        best_val_loss = float('inf')
+        best_val_loss = float("inf")
         best_model_state = None
 
         # 💾 Initialisation métriques
@@ -178,7 +237,9 @@ def train(model_name):
             correct = 0
             total = 0
 
-            for images, labels in tqdm(train_loader, desc=f"Fold {fold+1} Epoch {epoch+1}/{EPOCHS}"):
+            for images, labels in tqdm(
+                train_loader, desc=f"Fold {fold+1} Epoch {epoch+1}/{EPOCHS}"
+            ):
                 images, labels = images.to(DEVICE), labels.to(DEVICE)
 
                 optimizer.zero_grad()
@@ -194,7 +255,9 @@ def train(model_name):
 
             train_acc = correct / total
             train_loss = running_loss / total
-            print(f"→ Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.4f}")
+            print(
+                f"→ Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.4f}"
+            )
 
             # Validation
             model.eval()
@@ -241,7 +304,9 @@ def train(model_name):
         # Sauvegarde du meilleur modèle de ce fold
         if best_model_state:
             model.load_state_dict(best_model_state)
-            torch.save(model.state_dict(), f"{model_name}_fold{fold+1}_best.pth")
+            torch.save(
+                model.state_dict(), f"{model_name}_fold{fold+1}_best.pth"
+            )
             print(f"✅ Best model saved: {model_name}_fold{fold+1}_best.pth")
 
     # 📊 Résumé global

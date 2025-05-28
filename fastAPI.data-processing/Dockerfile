@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM fastapi-base
 
 # Set a working directory
 WORKDIR /data-processing
@@ -13,4 +13,4 @@ RUN pip install --no-cache-dir -r requirements.data-processing.txt
 
 
 # Start the application with uvicorn
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--access-log"]

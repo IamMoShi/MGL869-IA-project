@@ -41,4 +41,3 @@ db.sync({ force: false })
   });
 
 wlogger.info(createMessage( Date.now(), 'SUCCESS', 'Web-Server', 'server.js', '', '', 'Web-Server démarré avec succès'));
-

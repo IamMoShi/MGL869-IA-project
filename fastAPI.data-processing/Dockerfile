@@ -1,4 +1,4 @@
-FROM fastapi-base
+FROM fastapi-base-image
 
 # Set a working directory
 WORKDIR /data-processing

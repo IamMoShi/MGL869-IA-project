@@ -20,20 +20,20 @@
 
 To build the fastAPIs docker images, you should first build the base image with the [fastAPI.base-image/Dockerfile]()
 file.
-You can use the following command :
+You can use the following command from the folder `fastAPI.base-image`:
 
 ```bash
-docker build -t fastapi-base-image -f fastAPI.base-image/Dockerfile .
+docker build -t fastapi-base-image .
 ```
 
 Then, you can build the fastAPIs using the [docker-compose.yml]() file.
 
 ## Data processing
 
-In order to work with the data processing fastAPI, you should first create two buckets in your MinIO instance, by
-default, the buckets are `images` and `training-data`.
+In order to work with the data processing fastAPI, you should first create two buckets in your MinIO instance `http://127.0.0.1:9001/browser`, by
+default, the buckets are `images` and `training-data`. User is `minioadmin/minioadmin`.
 
-Then start the api. If everything is ok, you should be able to access the api at `http://localhost:5010/` and a table
+Then start the api. If everything is ok, you should be able to access the api at `http://localhost:5010/docs` and a table
 name images should have been created in the postgres database.
 
 After that, you will need to fullfill the buckets with sample images to be able to test the pipeline. To do that, just

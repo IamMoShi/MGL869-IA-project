@@ -1,4 +1,4 @@
-FROM python:3.13-slim as fastapi-base
+FROM python:3.13-slim as fastapi-base-image
 
 RUN apt-get update && apt-get install -y \
     gcc \

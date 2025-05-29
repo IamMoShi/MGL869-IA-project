@@ -45,5 +45,3 @@ After that, wait for a while that all the images are loaded in the bucket. You c
 
 After doing so, you can run the pipeline directly from the data processing fastAPI.
 The output images will appear in the other bucket named `training-data` (default).
-
-

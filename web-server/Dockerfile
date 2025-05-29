@@ -5,7 +5,7 @@ WORKDIR /web-server
 COPY package*.json ./
 RUN npm install --production
 
-COPY app/ app/
+COPY backend/ app/
 COPY .env ./
 
 CMD ["npm", "start"]

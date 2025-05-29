@@ -6,7 +6,7 @@ const http = require('http');
 const axios = require('axios');
 const FormData = require('form-data');
 
-const DESTINATION_URL = 'http:/production-model:8000/api/v1/analyze/predict';
+const DESTINATION_URL = 'http:/fastapi-production-model:8000/api/v1/analyze/predict';
 
 module.exports = async function predictImage(req, res) {
 

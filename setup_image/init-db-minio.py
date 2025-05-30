@@ -34,9 +34,9 @@ s3 = boto3.client(
     aws_access_key_id=MINIO_ACCESS_KEY,
     aws_secret_access_key=MINIO_SECRET_KEY,
 )
-engine = create_engine(DB_URL)
-Session = sessionmaker(bind=engine)
-session = Session()
+# engine = create_engine(DB_URL)
+# Session = sessionmaker(bind=engine)
+# session = Session()
 
 
 def random_date_within_last_two_months():
@@ -49,7 +49,7 @@ def random_date_within_last_two_months():
     )
 
 
-# --- Traitement ---
+# --- Traitement ---docker ps
 filenames = [
     f
     for f in os.listdir(IMAGES_DIR)
@@ -79,13 +79,13 @@ for idx, filename in enumerate(filenames, start=1):
                 category = CLASS_MAP[label]
             attribution_method = 0
 
-        image = Image(
-            filename=filename,
-            category=category,
-            attribution_method=attribution_method,
-            created_at=created_at,
-        )
-        session.add(image)
+        # image = Image(
+        #     filename=filename,
+        #     category=category,
+        #     attribution_method=attribution_method,
+        #     created_at=created_at,
+        # )
+        # session.add(image)
 
     except Exception as e:
         errors += 1
@@ -94,5 +94,5 @@ for idx, filename in enumerate(filenames, start=1):
     if idx % PROGRESS_EVERY == 0:
         print(f"[{idx}/{total}] Progress...")
 
-session.commit()
+# session.commit()
 print(f"✅ Upload terminé : {total - errors} réussis, {errors} erreurs.")

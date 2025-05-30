@@ -50,7 +50,8 @@ services:
       - ./web-server/.env
     volumes:
       - ./web-server/databases:/web-server/databases
-      - ./web-server/app/:/web-server/app/
+      - ./web-server/backend/:/web-server/backend/
+      - ./web-server/logs/:/usr/share/logs/
       - ./web-server/logs/:/usr/share/logs/
 
   # Storage (similar to S3 of AWS)

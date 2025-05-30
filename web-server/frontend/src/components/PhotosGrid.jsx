@@ -13,8 +13,8 @@ const PhotosGrid = () => {
   ];
 
   return (
-    <Sheet sx={{ p: 3 }}>
-      <Typography level="h2" sx={{ mb: 2 }}>
+    <Sheet sx={{ px: 10, py : 5 }}>
+      <Typography level="h2" sx={{ mb: 2, pb : 2 }}>
         Photos
       </Typography>
 

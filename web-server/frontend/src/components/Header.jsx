@@ -14,14 +14,14 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const Header = () => {
   return (
-    <Box component="header" sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box component="header" sx={{ px: 10, py : 5, display: 'flex', flexDirection: 'column', gap: 2 }}>
       {/* First Row */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography level="h4">XPics</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Typography level="h4">SmartVue Photos</Typography>
 
-        <Input placeholder="Rechercher..." sx={{ width: 300 }} />
+        <Input placeholder="Rechercher..." sx={{ width: 500, ml: 15}} />
 
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1}}>
           <Button variant="outlined">Log in</Button>
           <Button variant="outlined">Sign up</Button>
           <Button variant="solid">Upload images</Button>
@@ -29,7 +29,7 @@ const Header = () => {
       </Box>
 
       {/* Second Row: Category Buttons */}
-      <Box sx={{ display: 'flex', gap: 1 }}>
+      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center'}}>
         <Button variant="solid">All</Button>
         <Button variant="solid">Sea</Button>
         <Button variant="solid">Mountain</Button>

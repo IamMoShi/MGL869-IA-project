@@ -9,7 +9,10 @@ services:
       - "5000:8000"
     environment:
       - PYTHONUNBUFFERED=1
-
+    volumes:
+      - ./fastAPI.production-model/app/:/production-model/app/
+      - ./fastAPI.production-model/logs/:/usr/share/logs/
+    
   fastapi-data-processing:
     build:
       context: fastAPI.data-processing

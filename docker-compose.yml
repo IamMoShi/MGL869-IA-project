@@ -12,7 +12,7 @@ services:
     volumes:
       - ./fastAPI.production-model/app/:/production-model/app/
       - ./fastAPI.production-model/logs/:/usr/share/logs/
-    
+
   fastapi-data-processing:
     build:
       context: fastAPI.data-processing
@@ -55,6 +55,12 @@ services:
       - ./web-server/databases:/web-server/databases
       - ./web-server/app/:/web-server/app/
       - ./web-server/logs/:/usr/share/logs/
+
+  redis:
+    image: redis:7.4.4
+    container_name: redis
+    ports:
+      - "6379:6379"
 
   # Storage (similar to S3 of AWS)
   minio:

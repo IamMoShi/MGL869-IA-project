@@ -60,9 +60,14 @@ async def get_prediction_from_s3(filename: str):
 @router.get("/image/{filename}")
 async def analyze_image(filename: str):
     try:
+        start_time = time.time()
         prediction = await get_prediction_from_s3(filename)
+        elapsed_time = time.time() - start_time
+        logger.info(makeMessage(errorType="SUCCES", sourceService=source, apiEndpoint="/image/{filename}", val1=prediction, val2=filename, message=f"Prediction: {prediction}, Latency: {elapsed_time:.2f} seconds"))
         return {"filename": filename, "prediction": prediction}
     except s3_client.exceptions.NoSuchKey:
+        logger.error(makeMessage(errorType="ERROR", sourceService=source, apiEndpoint="/image/{filename}", val1="", val2=filename, message=f"An exception occurred while retrieving the image: {filename}"))
         raise HTTPException(status_code=404, detail="Image not found")
     except Exception as e:
+        logger.error(makeMessage(errorType="ERROR", sourceService=source, apiEndpoint="/image/{filename}", val1="", val2=filename, message=f"An exception occurred : {str(e)}"))
         raise HTTPException(status_code=500, detail=str(e))

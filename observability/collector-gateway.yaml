@@ -17,7 +17,7 @@ processors:
 
 exporters:
   logging:
-    loglevel: info # debug, info, warn, error
+    loglevel: debug # debug, info, warn, error
   otlp/jaeger:
     endpoint: jaeger:4317   # Jaeger is the container’s name in docker-compose.
     tls:

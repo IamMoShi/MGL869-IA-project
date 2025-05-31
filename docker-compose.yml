@@ -11,7 +11,7 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./fastAPI.production-model/app/:/production-model/app/
-      - ./fastAPI.production-model/logs/:/usr/share/logs/
+      - ./fastAPI.production-model/app/logs/:/usr/share/logs/
 
   fastapi-data-processing:
     build:

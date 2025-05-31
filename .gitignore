@@ -22,3 +22,7 @@ web-server/logs/
 /ia-lab/leo/datasets/
 /ia-lab/leo/augmented_dataset/
 /setup_image/images/
+
+fastAPI.production-model/app/logs/
+
+logs/fastAPI.production-model.csv

@@ -11,7 +11,7 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./fastAPI.production-model/app/:/production-model/app/
-      - ./fastAPI.production-model/logs/:/usr/share/logs/
+      - ./fastAPI.production-model/app/logs/:/usr/share/logs/
     
   fastapi-data-processing:
     build:
@@ -366,7 +366,7 @@ services:
     volumes:
       - certs:/usr/share/logstash/certs
       - logstashdata01:/usr/share/logstash/data
-      - ./web-server/logs/:/usr/share/logs/
+      - ./fastAPI.production-model/app/logs/:/usr/share/logs/fastAPI.production-model/
       - ./observability/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
     environment:
       - xpack.monitoring.enabled=false

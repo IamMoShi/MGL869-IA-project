@@ -3,7 +3,11 @@ from app.core.minio import BUCKET_NAME, s3_client
 from app.services.analyzer import predict_from_bytes
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from app.services.metrics import inferences_counter, inference_latence_gauge, inference_avg_latence_gauge
+from app.logger import logger, makeMessage
+
 import time
+
+source="fastAPI.production-model"
 
 router = APIRouter()
 
@@ -32,12 +36,14 @@ async def predict(file: UploadFile = File(...)):
         else:
             latency_average = (latency_average + elapsed_time) / 2
         inference_avg_latence_gauge.set(latency_average, {"metric": "average_latence"})
-
-        print(f"Prediction: {prediction}, Latency: {elapsed_time:.2f} seconds")
-        print(f"Average latency: {latency_average:.2f} seconds")
-        print(f"Total predictions: {predictions_counter}")
         
+        latency_average= round(latency_average, 2)
+        logger.info(makeMessage(errorType="SUCCES", sourceService=source, apiEndpoint="/predict", val1=prediction, val2=file.filename, message=f"Prediction: {prediction}, Latency: {elapsed_time:.2f} seconds"))
+        logger.info(makeMessage(errorType="SUCCES", sourceService=source, apiEndpoint="/predict", val1=latency_average, val2=file.filename, message=f"Average latency: {latency_average} seconds"))
+        logger.info(makeMessage(errorType="SUCCES", sourceService=source, apiEndpoint="/predict", val1=predictions_counter, val2=file.filename, message=f"Total predictions: {predictions_counter}"))
+
         return {"prediction": prediction}
+    
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

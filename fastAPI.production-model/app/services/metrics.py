@@ -28,8 +28,6 @@ meter = get_meter_provider().get_meter(name)
 
 # 5. Create the metrics
 inferences_counter = meter.create_counter("inferences_counter")
-# inferences_counter.add(1, {"region": "us-east"})
-
 inference_latence_gauge = meter.create_gauge("inference_latence_gauge")
-# gauge.set(value, {"service": "TestPythonService"})
+inference_avg_latence_gauge = meter.create_gauge("inference_average_latence_gauge")
 

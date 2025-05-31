@@ -2,11 +2,13 @@ from aiocache import SimpleMemoryCache, cached
 from app.core.minio import BUCKET_NAME, s3_client
 from app.services.analyzer import predict_from_bytes
 from fastapi import APIRouter, File, HTTPException, UploadFile
-from app.services.metrics import inferences_counter, inference_latence_gauge
+from app.services.metrics import inferences_counter, inference_latence_gauge, inference_avg_latence_gauge
 import time
 
 router = APIRouter()
 
+latency_average = 0.0
+predictions_counter = 0
 
 @router.post("/predict")
 async def predict(file: UploadFile = File(...)):
@@ -14,12 +16,27 @@ async def predict(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="File must be an image")
     image_bytes = await file.read()
     try:
+        global latency_average
+        global predictions_counter
+
+        predictions_counter += 1
+        inferences_counter.add(1, {"metric": "inferences_count"})
+
         start_time = time.time()
         prediction = await predict_from_bytes(image_bytes)
         elapsed_time = time.time() - start_time
+
         inference_latence_gauge.set(elapsed_time, {"metric": "latence"})
+        if predictions_counter == 1:
+            latency_average = elapsed_time
+        else:
+            latency_average = (latency_average + elapsed_time) / 2
+        inference_avg_latence_gauge.set(latency_average, {"metric": "average_latence"})
+
         print(f"Prediction: {prediction}, Latency: {elapsed_time:.2f} seconds")
-        inferences_counter.add(1, {"metric": "inferences_count"})
+        print(f"Average latency: {latency_average:.2f} seconds")
+        print(f"Total predictions: {predictions_counter}")
+        
         return {"prediction": prediction}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

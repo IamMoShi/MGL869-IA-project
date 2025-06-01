@@ -28,6 +28,6 @@ meter = get_meter_provider().get_meter(name)
 
 # 5. Create the metrics
 inferences_counter = meter.create_counter("inferences_counter")
-inference_latence_gauge = meter.create_gauge("inference_latence_gauge")
-inference_avg_latence_gauge = meter.create_gauge("inference_average_latence_gauge")
+inference_latency_gauge = meter.create_gauge("inference_latence_gauge")
+inference_avg_latency_gauge = meter.create_gauge("inference_average_latence_gauge")
 

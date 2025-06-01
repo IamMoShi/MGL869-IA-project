@@ -1,12 +1,19 @@
+import logging
+
 import boto3
 import cv2
 import numpy as np
 import pandas as pd
+import torch
+from PIL import Image
+
 from app.core.minio import PIPELINE_BUCKET, s3_client
 from torch.utils.data import Dataset
+from app.services.log import clean_info_log
 
 
 def load_dataset_from_minio(repertory: str):
+    clean_info_log(f"Loading dataset from {repertory}")
     paginator = s3_client.get_paginator("list_objects_v2")
 
     def get_subset(subset: str):
@@ -37,54 +44,38 @@ def load_dataset_from_minio(repertory: str):
         df["split"] = split
         return df
 
+    clean_info_log("Loading dataset completed")
+
     return dict_to_df(dataset_train, "train"), dict_to_df(dataset_test, "test")
 
 
 class ImageDatasetFromMinioDF(Dataset):
-    def __init__(
-        self,
-        df: pd.DataFrame,
-        s3_client: boto3.client,
-        bucket: str,
-        label_column="label",
-        image_column="image_path",
-        transform=None,
-    ):
-        self.df = df.reset_index(drop=True)
+    def __init__(self, df: pd.DataFrame, bucket, transform, label_column="label"):
+        self.df = df
         self.s3_client = s3_client
-        self.bucket = bucket
+        self.bucket_name = bucket
         self.transform = transform
-        self.image_column = image_column
         self.label_column = label_column
 
-        # Encode string labels to integers
-        self.label_to_index = {
-            label: i
-            for i, label in enumerate(sorted(df[label_column].unique()))
-        }
-        self.df["label_index"] = self.df[label_column].map(self.label_to_index)
+        if self.label_column not in df.columns:
+            raise KeyError(f"Column '{self.label_column}' not found in DataFrame")
+
+        self.label_map = {label: i for i, label in enumerate(sorted(df[self.label_column].unique()))}
 
     def __len__(self):
         return len(self.df)
 
     def __getitem__(self, idx):
         row = self.df.iloc[idx]
-        key = row[self.image_column]
+        image_path = row["image_path"]
+        label = self.label_map[row[self.label_column]]
 
-        # Download the image from Minio
-        s3_obj = self.s3_client.get_object(Bucket=self.bucket, Key=key)
-        image_bytes = s3_obj["Body"].read()
+        # Download image from MinIO
+        response = self.s3_client.get_object(Bucket=self.bucket_name, Key=image_path)
+        image = Image.open(response["Body"]).convert("RGB")
+        image = np.array(image)
 
-        # Convert to table numpy via OpenCV
-        img_array = np.asarray(bytearray(image_bytes), dtype=np.uint8)
-        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        # Apply transformations
+        image = self.transform(image=image)["image"]
 
-        # Transformation
-        if self.transform:
-            img = self.transform(image=img)["image"]
-
-        # Float tensor (PyTorch)
-        img = img.float()
-        label = row["label_index"]
-        return img, label
+        return image, label

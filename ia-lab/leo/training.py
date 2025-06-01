@@ -24,17 +24,18 @@ all_models = timm.list_models(
 print("-" + "\n-".join(all_models) + "\n", len(all_models))
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# DEVICE = "cpu"
 print("Using device:", DEVICE)
 
 
 # Dataset for preprocessed image paths + labels
 class ImageDatasetFromDF(Dataset):
     def __init__(
-        self,
-        df: pd.DataFrame,
-        label_column="label",
-        image_column="image_path",
-        transform=None,
+            self,
+            df: pd.DataFrame,
+            label_column="label",
+            image_column="image_path",
+            transform=None,
     ):
         self.df = df.reset_index(drop=True)
         self.transform = transform
@@ -89,7 +90,7 @@ def objective_factory(model_name, df: pd.DataFrame, pretrained=True):
         scores = []
 
         for fold_idx, (train_idx, val_idx) in enumerate(
-            kf.split(df_local, df_local["label_index"])
+                kf.split(df_local, df_local["label_index"])
         ):
             print(f"\n📂 Fold {fold_idx + 1}/5")
 
@@ -174,8 +175,8 @@ class EarlyStopping:
 
     def __call__(self, val_loss):
         if (
-            self.best_loss is None
-            or val_loss < self.best_loss - self.min_delta
+                self.best_loss is None
+                or val_loss < self.best_loss - self.min_delta
         ):
             self.best_loss = val_loss
             self.counter = 0
@@ -195,7 +196,7 @@ def train(model_name):
     all_metrics = []
 
     for fold, (train_idx, val_idx) in enumerate(
-        skf.split(df["image_path"], df["label"])
+            skf.split(df["image_path"], df["label"])
     ):
         print(f"\n🔁 Fold {fold + 1}/{N_SPLITS}")
 
@@ -238,11 +239,12 @@ def train(model_name):
             total = 0
 
             for images, labels in tqdm(
-                train_loader, desc=f"Fold {fold+1} Epoch {epoch+1}/{EPOCHS}"
+                    train_loader, desc=f"Fold {fold + 1} Epoch {epoch + 1}/{EPOCHS}"
             ):
                 images, labels = images.to(DEVICE), labels.to(DEVICE)
 
                 optimizer.zero_grad()
+                print(f"Type of images: {type(images)}")
                 outputs = model(images)
                 loss = criterion(outputs, labels)
                 loss.backward()
@@ -290,7 +292,7 @@ def train(model_name):
 
             early_stopper(val_loss)
             if early_stopper.early_stop:
-                print(f"🛑 Early stop at epoch {epoch+1}")
+                print(f"🛑 Early stop at epoch {epoch + 1}")
                 break
 
         end_time = time.time()
@@ -305,13 +307,13 @@ def train(model_name):
         if best_model_state:
             model.load_state_dict(best_model_state)
             torch.save(
-                model.state_dict(), f"{model_name}_fold{fold+1}_best.pth"
+                model.state_dict(), f"{model_name}_fold{fold + 1}_best.pth"
             )
-            print(f"✅ Best model saved: {model_name}_fold{fold+1}_best.pth")
+            print(f"✅ Best model saved: {model_name}_fold{fold + 1}_best.pth")
 
     # 📊 Résumé global
     for i, m in enumerate(all_metrics):
-        print(f"\n📄 Fold {i+1} Summary:")
+        print(f"\n📄 Fold {i + 1} Summary:")
         print(f"  ⏱️ Time: {m['training_time_sec']:.2f}s")
         print(f"  🔁 Epochs: {m['epochs_done']}")
         print(f"  🏆 Best Val Loss: {m['best_val_loss']:.4f}")

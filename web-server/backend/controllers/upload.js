@@ -17,6 +17,7 @@ module.exports = async function uploadImage(req, res) {
     await uploadSF.uploadSingleFile(req, res);
 
     wlogger.info(createMessage( Date.now(), 'SUCCESS', MODULE, '/uploadImage', '', '', 'Image uploadé avec succès'));
+    // TODO : Add info to the database about the image uploaded
     res.status(200).json({ error: "Succès de l'upload" });
   }
   catch (err) {

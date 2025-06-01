@@ -14,11 +14,22 @@ const {wlogger, createMessage} = require('./winstonlogger.js');
 
 const app = express();
 const PORT = 8080;
+const cors = require("cors");
 
 
 app.use(express.urlencoded({extended: false}));
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
+
+const imagesRoute = require("./routes/images");
+app.use(cors()); // Autoriser les requêtes depuis React
+app.use("/api/images", imagesRoute);
+
+MINIO_PORT = 5001;
+app.listen(MINIO_PORT, () => {
+  console.log(`✅ Backend démarré sur http://localhost:${MINIO_PORT}`);
+});
+
 
 initAuth();
 app.use(session({

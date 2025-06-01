@@ -17,9 +17,9 @@ import {
   UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import MainSidebar from "./MainSidebar";
-import ImageGridList from "./images/ImageGridList";
-import Empty from "./images/Empty";
+import MainSidebar from "../components/MainSidebar";
+import ImageGridList from "../components/images/ImageGridList";
+import Empty from "../components/images/Empty";
 
 const navigation = [
   { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
@@ -81,7 +81,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function MainLayout() {
+export default function Upload() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (

@@ -11,8 +11,15 @@ import {
 } from '@mui/joy';
 import MenuIcon from '@mui/icons-material/Menu';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import {useNavigate} from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
+
+  const goToUpload = () => {
+    navigate('/upload');
+  };
+
   return (
     <Box component="header" sx={{ px: 10, py : 5, display: 'flex', flexDirection: 'column', gap: 2 }}>
       {/* First Row */}
@@ -24,7 +31,7 @@ const Header = () => {
         <Box sx={{ display: 'flex', gap: 1}}>
           <Button variant="outlined">Log in</Button>
           <Button variant="outlined">Sign up</Button>
-          <Button variant="solid">Upload images</Button>
+          <Button variant="solid" onClick={goToUpload}>Upload images</Button>
         </Box>
       </Box>
 

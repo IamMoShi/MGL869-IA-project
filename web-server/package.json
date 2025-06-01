@@ -26,6 +26,7 @@
     "sqlite3": "^5.1.7",
     "vite": "^6.3.5",
     "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "cors": "^2.8.5"
   }
 }

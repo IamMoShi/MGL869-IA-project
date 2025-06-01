@@ -41,8 +41,8 @@ Then start the api. If everything is ok, you should be able to access the api at
 name images should have been created in the postgres database.
 
 After that, you will need to fullfill the buckets with sample images to be able to test the pipeline. To do that, just
-use the image of the dataset contains in `seg_pred` and add them to a folder named `images` in `setup_image`.
-Then you can run `init-db-minio` which is in the same folder.
+use the image of the dataset contains in `seg_pred` and add them to a folder named `images` under folder `setup_image`.
+Then you can run `init-db-minio` which is in the same folder. That will copy images in the minio bucket and create entries in the postgreSQL BD with their categories.
 
 After that, wait for a while that all the images are loaded in the bucket. You can check the images by going to
 `http://localhost:9001/` and logging in with the credentials `minioadmin:minioadmin` (defaults).

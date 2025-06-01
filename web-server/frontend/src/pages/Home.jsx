@@ -3,6 +3,7 @@ import '../styles/Home.css';
 
 import Header from "../components/Header";
 import PhotosGrid from "../components/PhotosGrid";
+import {Typography} from "@mui/joy";
 
 function Home() {
   const [message, setMessage] = useState('');

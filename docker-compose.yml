@@ -36,23 +36,22 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
 
-  web-server:
-    build:
-      context: ./web-server
-      dockerfile: Dockerfile
-    container_name: web-server
-    restart: no
-    ports:
-      - "8080:8080"
-    environment:
-      - NODE_ENV=production
-    env_file:
-      - ./web-server/.env
-    volumes:
-      - ./web-server/databases:/web-server/databases
-      - ./web-server/backend/:/web-server/backend/
-      - ./web-server/logs/:/usr/share/logs/
-      - ./web-server/logs/:/usr/share/logs/
+#  web-server:
+#    build:
+#      context: ./web-server
+#      dockerfile: Dockerfile
+#    container_name: web-server
+#    restart: no
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      - NODE_ENV=production
+#    env_file:
+#      - ./web-server/.env
+#    volumes:
+#      - ./web-server/backend:/web-server/backend
+#      - ./web-server/logs:/usr/share/logs
+#      - ./web-server/databases:/web-server/databases
 
   # Storage (similar to S3 of AWS)
   minio:

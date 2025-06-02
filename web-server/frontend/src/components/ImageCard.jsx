@@ -6,6 +6,14 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"; // Ic
 import { ID_TO_CATEGORY, CATEGORY_MAP } from '../utils/categoryMap.js';
 
 const ImageCard = ({ imageUrl, category, onSelectCategory }) => {
+    const handleDownload = () => {
+        const link = document.createElement("a");
+        link.href = imageUrl;
+        link.download = imageUrl.split('/').pop(); // nom du fichier
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
   return (
     <div className="image-card" style={{ backgroundImage: `url(${imageUrl})` }}>
       <div className="image-overlay">
@@ -24,7 +32,7 @@ const ImageCard = ({ imageUrl, category, onSelectCategory }) => {
                 )}
               </Menu>
             </Dropdown>
-        <button className="download-button">
+        <button className="download-button" onClick={handleDownload}>
           <FiDownload size={18} />
         </button>
       </div>

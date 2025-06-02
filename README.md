@@ -5,8 +5,7 @@
 ## How to run the backend
 
 1. Run `npm install` in the root folder.
-2. Run the server `node server`. Server is listening on 8080.
-3. Open `http://localhost:8080/`
+2. Run the server `node server`. (Port 5001)
 
 ## How to run the frontend
 

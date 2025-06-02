@@ -167,7 +167,7 @@ export function CustomDragDrop({
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/upload",
+        "http://localhost:5000/upload",
         formData,
         {
           headers: {

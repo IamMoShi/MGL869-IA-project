@@ -5,7 +5,7 @@ import Header from "../components/Header";
 import PhotosGrid from "../components/PhotosGrid";
 import {Typography} from "@mui/joy";
 
-function Home() {
+function Home({ category }) {
   const [message, setMessage] = useState('');
   const [prediction, setPrediction] = useState('');
 
@@ -24,7 +24,7 @@ function Home() {
     return (
         <div className="App">
             <Header/>
-            <PhotosGrid/>
+            <PhotosGrid category={category}/>
         </div>
     );
 }

@@ -20,6 +20,12 @@ const Header = () => {
     navigate('/upload');
   };
 
+  const goToCategory = (category) => {
+    navigate(`/${category}`);
+  };
+
+  const categories = ['sea', 'mountain', 'forest', 'glacier', 'street', 'buildings'];
+
   return (
     <Box component="header" sx={{ px: 10, py : 5, display: 'flex', flexDirection: 'column', gap: 2 }}>
       {/* First Row */}
@@ -37,9 +43,12 @@ const Header = () => {
 
       {/* Second Row: Category Buttons */}
       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center'}}>
-        <Button variant="solid">All</Button>
-        <Button variant="solid">Sea</Button>
-        <Button variant="solid">Mountain</Button>
+        <Button variant="solid" onClick={() => navigate('/')}>All</Button>
+        {categories.map(cat => (
+          <Button key={cat} variant="solid" onClick={() => goToCategory(cat)}>
+            {cat}
+          </Button>
+        ))}
       </Box>
 
       {/* Third Row: Dropdowns & Export */}

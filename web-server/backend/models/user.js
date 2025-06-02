@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../db');
+const sequelize = require('../db/sqlite');
 
 module.exports = sequelize.define(
   'User',

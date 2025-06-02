@@ -13,7 +13,7 @@ MINIO_ENDPOINT = "localhost:9000"
 MINIO_ACCESS_KEY = "minioadmin"
 MINIO_SECRET_KEY = "minioadmin"
 MINIO_BUCKET = "images"
-DB_URL = "postgresql://postgres:changeme@localhost:5432/web-database"
+DB_URL = "postgresql://postgres:changeme@localhost:3630/web-database"
 IMAGES_DIR = "./images"
 ANALYZE_API_URL = "http://127.0.0.1:5000/api/v1/analyze/predict"
 PROGRESS_EVERY = 100
@@ -34,9 +34,9 @@ s3 = boto3.client(
     aws_access_key_id=MINIO_ACCESS_KEY,
     aws_secret_access_key=MINIO_SECRET_KEY,
 )
-# engine = create_engine(DB_URL)
-# Session = sessionmaker(bind=engine)
-# session = Session()
+engine = create_engine(DB_URL)
+Session = sessionmaker(bind=engine)
+session = Session()
 
 
 def random_date_within_last_two_months():
@@ -79,13 +79,13 @@ for idx, filename in enumerate(filenames, start=1):
                 category = CLASS_MAP[label]
             attribution_method = 0
 
-        # image = Image(
-        #     filename=filename,
-        #     category=category,
-        #     attribution_method=attribution_method,
-        #     created_at=created_at,
-        # )
-        # session.add(image)
+        image = Image(
+            filename=filename,
+            category=category,
+            attribution_method=attribution_method,
+            created_at=created_at,
+        )
+        session.add(image)
 
     except Exception as e:
         errors += 1
@@ -94,5 +94,5 @@ for idx, filename in enumerate(filenames, start=1):
     if idx % PROGRESS_EVERY == 0:
         print(f"[{idx}/{total}] Progress...")
 
-# session.commit()
+session.commit()
 print(f"✅ Upload terminé : {total - errors} réussis, {errors} erreurs.")

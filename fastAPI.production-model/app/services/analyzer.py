@@ -6,6 +6,9 @@ from torchvision import transforms
 
 CLASSES = ["buildings", "forest", "glacier", "mountain", "sea", "street"]
 
+# Fictitious example with a PyTorch model
+MODEL_VERSION="resnet50.2025-06-01-02-10-34_last1000_random500.2.pth"
+
 transform = transforms.Compose(
     [
         transforms.Resize((224, 224)),

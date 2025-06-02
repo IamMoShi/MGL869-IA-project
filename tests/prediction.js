@@ -172,10 +172,11 @@ async function run_tests() {
             console.log(`Prediction for ${file} matches expected class: ${className}\n`);
           }
           else {
-            logStream.write(`Prediction for ${file} does not match expected class: ${className}\n`);
+            logStream.write(`ERROR: Prediction for ${file} does not match expected class: ${className}. Classified as: ${prediction}\n`);
             nbErrors++;
           }
-          await new Promise(resolve => setTimeout(resolve, 250));
+          const randomInt = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
+          await new Promise(resolve => setTimeout(resolve, randomInt));
           nbFiles++;
           }
         }

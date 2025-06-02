@@ -3,6 +3,10 @@ from logging.handlers import RotatingFileHandler
 import os
 import datetime
 
+
+CODE_SUCCESS="SUCCESS"
+CODE_ERROR="ERROR"
+
 # Create log directory if needed
 os.makedirs("/usr/share/logs", exist_ok=True)
 
@@ -30,8 +34,8 @@ logger.addHandler(handler)
 logger.propagate = False
 
 # Define your CSV-style message builder
-def makeMessage(errorType, sourceService, apiEndpoint, val1, val2, message, request_ID=''):
+def makeMessage(errorType, sourceService, apiEndpoint, model_version, val1, val2, message, request_ID=''):
     current_time_unix = int(datetime.datetime.utcnow().timestamp() * 1000)
-    return f"{current_time_unix},{errorType},{sourceService},{apiEndpoint},{val1},{val2},{message},{request_ID}"
+    return f"{current_time_unix},{errorType},{sourceService},{apiEndpoint},{model_version},{val1},{val2},{message},{request_ID}"
 
 # Example usage

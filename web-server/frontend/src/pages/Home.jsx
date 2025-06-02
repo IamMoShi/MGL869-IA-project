@@ -23,7 +23,7 @@ function Home({ category }) {
 
     return (
         <div className="App">
-            <Header/>
+            <Header category={category}/>
             <PhotosGrid category={category}/>
         </div>
     );

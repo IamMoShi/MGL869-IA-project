@@ -12,8 +12,9 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {useNavigate} from "react-router-dom";
+import {CATEGORY_MAP} from "../utils/categoryMap.js";
 
-const Header = () => {
+const Header = ({category}) => {
   const navigate = useNavigate();
 
   const goToUpload = () => {
@@ -24,7 +25,7 @@ const Header = () => {
     navigate(`/${category}`);
   };
 
-  const categories = ['sea', 'mountain', 'forest', 'glacier', 'street', 'buildings'];
+  const categories = Object.keys(CATEGORY_MAP);
 
   return (
     <Box component="header" sx={{ px: 10, py : 5, display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -43,9 +44,9 @@ const Header = () => {
 
       {/* Second Row: Category Buttons */}
       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center'}}>
-        <Button variant="solid" onClick={() => navigate('/')}>All</Button>
+        <Button variant={category === undefined ? "solid" : "outlined"} onClick={() => navigate('/')}>All</Button>
         {categories.map(cat => (
-          <Button key={cat} variant="solid" onClick={() => goToCategory(cat)}>
+          <Button key={cat} variant={category === CATEGORY_MAP[cat] ? "solid" : "outlined"} onClick={() => goToCategory(cat)}>
             {cat}
           </Button>
         ))}
@@ -83,7 +84,6 @@ const Header = () => {
           <Button variant="solid">Export All</Button>
         </Box>
 
-        <Typography level="body-sm">1-100 à 1 000 000</Typography>
       </Box>
     </Box>
   );

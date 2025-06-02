@@ -3,7 +3,6 @@ import random
 from datetime import datetime, timedelta
 
 import boto3
-import requests
 from models.image import Image
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -15,7 +14,6 @@ MINIO_SECRET_KEY = "minioadmin"
 MINIO_BUCKET = "images"
 DB_URL = "postgresql://postgres:changeme@localhost:5432/web-database"
 IMAGES_DIR = "./images"
-ANALYZE_API_URL = "http://127.0.0.1:5000/api/v1/analyze/predict"
 PROGRESS_EVERY = 100
 
 CLASS_MAP = {
@@ -50,49 +48,44 @@ def random_date_within_last_two_months():
 
 
 # --- Traitement ---
-filenames = [
-    f
-    for f in os.listdir(IMAGES_DIR)
-    if os.path.isfile(os.path.join(IMAGES_DIR, f))
-]
-total = len(filenames)
 errors = 0
+total = 0
 
-for idx, filename in enumerate(filenames, start=1):
-    filepath = os.path.join(IMAGES_DIR, filename)
+for class_name, class_id in CLASS_MAP.items():
+    class_dir = os.path.join(IMAGES_DIR, class_name)
+    if not os.path.isdir(class_dir):
+        print(f"⚠️ Dossier manquant : {class_dir}")
+        continue
 
-    try:
-        s3.upload_file(filepath, MINIO_BUCKET, filename)
-        created_at = random_date_within_last_two_months()
+    filenames = [
+        f for f in os.listdir(class_dir)
+        if os.path.isfile(os.path.join(class_dir, f))
+    ]
 
-        if random.random() < 0.1:
-            attribution_method = 1
-            category = random.randint(0, 5)
-        else:
-            with open(filepath, "rb") as img_file:
-                resp = requests.post(
-                    ANALYZE_API_URL,
-                    files={"file": (filename, img_file, "image/jpeg")},
-                )
-                resp.raise_for_status()
-                label = resp.json()["prediction"]
-                category = CLASS_MAP[label]
-            attribution_method = 0
+    for filename in filenames:
+        total += 1
+        filepath = os.path.join(class_dir, filename)
 
-        image = Image(
-            filename=filename,
-            category=category,
-            attribution_method=attribution_method,
-            created_at=created_at,
-        )
-        session.add(image)
+        try:
+            # Envoi à la racine du bucket (clé = nom du fichier uniquement)
+            s3.upload_file(filepath, MINIO_BUCKET, filename)
 
-    except Exception as e:
-        errors += 1
-        print(f"[{idx}/{total}] ❌ {filename} : {e}")
+            created_at = random_date_within_last_two_months()
 
-    if idx % PROGRESS_EVERY == 0:
-        print(f"[{idx}/{total}] Progress...")
+            image = Image(
+                filename=filename,                # Clé simple (sans dossier)
+                category=class_id,
+                attribution_method=1,             # Dérivé de la structure du dossier
+                created_at=created_at,
+            )
+            session.add(image)
+
+        except Exception as e:
+            errors += 1
+            print(f"[{total}] ❌ {filename} : {e}")
+
+        if total % PROGRESS_EVERY == 0:
+            print(f"[{total}] Progress...")
 
 session.commit()
 print(f"✅ Upload terminé : {total - errors} réussis, {errors} erreurs.")

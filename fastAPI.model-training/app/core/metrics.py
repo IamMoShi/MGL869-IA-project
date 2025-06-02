@@ -14,7 +14,7 @@ resource = Resource.create(attributes={SERVICE_NAME: name})
 # 2. Set up the exporter and reader
 metric_reader = PeriodicExportingMetricReader(
     OTLPMetricExporter(
-        endpoint="http://localhost:4317/v1/metrics", insecure=True
+        endpoint="http://otel-collector-gateway:4317/v1/metrics", insecure=True
     ),
     export_interval_millis=500,
 )

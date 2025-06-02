@@ -2,7 +2,7 @@ from aiocache import SimpleMemoryCache, cached
 from app.core.minio import BUCKET_NAME, s3_client
 from app.services.analyzer import predict_from_bytes
 from fastapi import APIRouter, File, HTTPException, UploadFile
-from app.services.metrics import inferences_counter, inference_latence_gauge, inference_avg_latence_gauge
+from app.services.metrics import inferences_counter, inference_latency_gauge, inference_avg_latency_gauge
 from app.logger import logger, makeMessage
 
 import time

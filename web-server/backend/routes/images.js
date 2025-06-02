@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
 
     // Récupère en base la liste des images filtrées
     const imagesData = await Image.findAll({
-      // where: whereClause,
+      where: whereClause,
       attributes: ["filename", "category"],
     });
 

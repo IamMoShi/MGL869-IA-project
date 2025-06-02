@@ -8,7 +8,11 @@ const PhotosGrid = ({ category }) => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:5001/api/images`)
+    let path = `http://localhost:5001/api/images?category=${category}`;
+    if (category === undefined) {
+        path = "http://localhost:5001/api/images";
+    }
+    fetch(path)
       .then((res) => res.json())
       .then((data) => {
         console.log("Données reçues:", data); // Pour vérifier ce que tu reçois

@@ -11,7 +11,7 @@ const ImageCard = ({ imageUrl, category }) => {
         {/* Dropdown 1 */}
           <Dropdown>
             <MenuButton endDecorator={<KeyboardArrowDownIcon />} variant="soft">
-              Sea {/* TODO : Spécifier la catégorie */}
+              {category}
             </MenuButton>
             <Menu>
               <MenuItem>Sea</MenuItem>

@@ -24,6 +24,7 @@ all_models = timm.list_models(
 print("-" + "\n-".join(all_models) + "\n", len(all_models))
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# DEVICE = "cpu"
 print("Using device:", DEVICE)
 
 
@@ -238,11 +239,13 @@ def train(model_name):
             total = 0
 
             for images, labels in tqdm(
-                train_loader, desc=f"Fold {fold+1} Epoch {epoch+1}/{EPOCHS}"
+                train_loader,
+                desc=f"Fold {fold + 1} Epoch {epoch + 1}/{EPOCHS}",
             ):
                 images, labels = images.to(DEVICE), labels.to(DEVICE)
 
                 optimizer.zero_grad()
+                print(f"Type of images: {type(images)}")
                 outputs = model(images)
                 loss = criterion(outputs, labels)
                 loss.backward()
@@ -290,7 +293,7 @@ def train(model_name):
 
             early_stopper(val_loss)
             if early_stopper.early_stop:
-                print(f"🛑 Early stop at epoch {epoch+1}")
+                print(f"🛑 Early stop at epoch {epoch + 1}")
                 break
 
         end_time = time.time()
@@ -305,13 +308,13 @@ def train(model_name):
         if best_model_state:
             model.load_state_dict(best_model_state)
             torch.save(
-                model.state_dict(), f"{model_name}_fold{fold+1}_best.pth"
+                model.state_dict(), f"{model_name}_fold{fold + 1}_best.pth"
             )
-            print(f"✅ Best model saved: {model_name}_fold{fold+1}_best.pth")
+            print(f"✅ Best model saved: {model_name}_fold{fold + 1}_best.pth")
 
     # 📊 Résumé global
     for i, m in enumerate(all_metrics):
-        print(f"\n📄 Fold {i+1} Summary:")
+        print(f"\n📄 Fold {i + 1} Summary:")
         print(f"  ⏱️ Time: {m['training_time_sec']:.2f}s")
         print(f"  🔁 Epochs: {m['epochs_done']}")
         print(f"  🏆 Best Val Loss: {m['best_val_loss']:.4f}")

@@ -12,7 +12,7 @@ services:
     volumes:
       - ./fastAPI.production-model/app/:/production-model/app/
       - ./fastAPI.production-model/app/logs/:/usr/share/logs/
-    
+
   fastapi-data-processing:
     build:
       context: fastAPI.data-processing
@@ -55,6 +55,12 @@ services:
 #      - ./web-server/backend:/web-server/backend
 #      - ./web-server/logs:/usr/share/logs
 #      - ./web-server/databases:/web-server/databases
+
+  redis:
+    image: redis:7.4.4
+    container_name: redis
+    ports:
+      - "6379:6379"
 
   # Storage (similar to S3 of AWS)
   minio:
@@ -142,7 +148,8 @@ services:
     ports:
       - "3010:3000"
     volumes:
-      - ./observability/grafana-storage:/var/lib/grafana
+      - grafana-storage:/var/lib/grafana
+##      - ./observability/grafana-storage:/var/lib/grafana
 
   # Uses to setup ELK stack
   setup:
@@ -366,7 +373,7 @@ services:
     volumes:
       - certs:/usr/share/logstash/certs
       - logstashdata01:/usr/share/logstash/data
-      - ./fastAPI.production-model/app/logs/:/usr/share/logs/fastAPI.production-model/
+      - ./web-server/logs/:/usr/share/logs/
       - ./observability/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
     environment:
       - xpack.monitoring.enabled=false
@@ -464,6 +471,8 @@ volumes:
   minio-data:
     driver: local
   pgdata:
+    driver: local
+  grafana-storage:
     driver: local
 
 networks:

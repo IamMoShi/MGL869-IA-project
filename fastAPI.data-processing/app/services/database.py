@@ -44,3 +44,4 @@ async def get_random_images(db: AsyncSession, limit: int = 500):
     stmt = select(DBImage).order_by(func.random()).limit(limit)
     result = await db.execute(stmt)
     return result.scalars().all()
+

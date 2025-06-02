@@ -23,7 +23,7 @@ def build_directory_name(naming: str):
 
 def augment_images_from_minio(
     images: list[tuple[str, int]],
-    n_aug_per_image: int = 3,
+    n_aug_per_image: int = 1,
     naming: str = "weekly_augmented_images",
     train_ratio: float = 0.8,
 ):
@@ -39,11 +39,11 @@ def augment_images_from_minio(
     augment = al.Compose(
         [
             al.RandomResizedCrop((224, 224)),
-            al.HorizontalFlip(p=0.5),
-            al.Rotate(limit=15),
-            al.GaussNoise(std_range=(0.05, 0.15), p=0.3),
-            al.ColorJitter(p=0.5),
-            al.ToGray(p=0.1),
+            # al.HorizontalFlip(p=0.5),
+            # al.Rotate(limit=15),
+            # al.GaussNoise(std_range=(0.05, 0.15), p=0.3),
+            # al.ColorJitter(p=0.5),
+            # al.ToGray(p=0.1),
         ]
     )
 

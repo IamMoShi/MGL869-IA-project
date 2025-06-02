@@ -10,3 +10,8 @@ alembic==1.16.1
 SQLAlchemy==2.0.41
 asyncpg==0.30.0
 opencv-python-headless==4.11.0.86
+pandas==2.2.3
+albumentations==2.0.7
+opentelemetry-api==1.33.1
+opentelemetry-sdk==1.33.1
+opentelemetry-exporter-otlp==1.33.1

@@ -1,9 +1,10 @@
-from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
+    OTLPMetricExporter,
+)
+from opentelemetry.metrics import get_meter_provider, set_meter_provider
+from opentelemetry.sdk.metrics import Meter, MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
-from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
-from opentelemetry.metrics import set_meter_provider, get_meter_provider
-from opentelemetry.sdk.metrics import Meter 
 
 name = "fastAPI.production-model"
 
@@ -13,10 +14,9 @@ resource = Resource.create(attributes={SERVICE_NAME: name})
 # 2. Set up the exporter and reader
 metric_reader = PeriodicExportingMetricReader(
     OTLPMetricExporter(
-        endpoint="http://otel-collector-gateway:4317/v1/metrics",
-        insecure=True
+        endpoint="http://otel-collector-gateway:4317/v1/metrics", insecure=True
     ),
-    export_interval_millis=500
+    export_interval_millis=500,
 )
 
 # 3. Create and set MeterProvider BEFORE calling get_meter_provider or get_meter
@@ -28,6 +28,7 @@ meter = get_meter_provider().get_meter(name)
 
 # 5. Create the metrics
 inferences_counter = meter.create_counter("inferences_counter")
-inference_latence_gauge = meter.create_gauge("inference_latence_gauge")
-inference_avg_latence_gauge = meter.create_gauge("inference_average_latence_gauge")
-
+inference_latency_gauge = meter.create_gauge("inference_latence_gauge")
+inference_avg_latency_gauge = meter.create_gauge(
+    "inference_average_latence_gauge"
+)

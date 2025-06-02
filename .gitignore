@@ -26,3 +26,7 @@ web-server/logs/
 fastAPI.production-model/app/logs/
 
 logs/fastAPI.production-model.csv
+
+*.jpg
+
+tests/images-processing.log

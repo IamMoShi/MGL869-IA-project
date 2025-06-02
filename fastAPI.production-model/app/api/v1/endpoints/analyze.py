@@ -24,11 +24,14 @@ async def predict(file: UploadFile = File(...)):
         global predictions_counter
 
         predictions_counter += 1
+        logger.info(makeMessage(errorType="SUCCES", sourceService=source, apiEndpoint="/predict", val1=predictions_counter, val2=file.filename, message=f"Total predictions: {predictions_counter}"))
+
         inferences_counter.add(1, {"metric": "inferences_count"})
 
         start_time = time.time()
         prediction = await predict_from_bytes(image_bytes)
         elapsed_time = time.time() - start_time
+        logger.info(makeMessage(errorType="SUCCES", sourceService=source, apiEndpoint="/predict", val1=prediction, val2=file.filename, message=f"Prediction: {prediction}, Latency: {elapsed_time:.2f} seconds"))
 
         inference_latence_gauge.set(elapsed_time, {"metric": "latence"})
         if predictions_counter == 1:
@@ -38,9 +41,7 @@ async def predict(file: UploadFile = File(...)):
         inference_avg_latence_gauge.set(latency_average, {"metric": "average_latence"})
         
         latency_average= round(latency_average, 2)
-        logger.info(makeMessage(errorType="SUCCES", sourceService=source, apiEndpoint="/predict", val1=prediction, val2=file.filename, message=f"Prediction: {prediction}, Latency: {elapsed_time:.2f} seconds"))
         logger.info(makeMessage(errorType="SUCCES", sourceService=source, apiEndpoint="/predict", val1=latency_average, val2=file.filename, message=f"Average latency: {latency_average} seconds"))
-        logger.info(makeMessage(errorType="SUCCES", sourceService=source, apiEndpoint="/predict", val1=predictions_counter, val2=file.filename, message=f"Total predictions: {predictions_counter}"))
 
         return {"prediction": prediction}
     

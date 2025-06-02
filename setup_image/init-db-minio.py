@@ -58,7 +58,8 @@ for class_name, class_id in CLASS_MAP.items():
         continue
 
     filenames = [
-        f for f in os.listdir(class_dir)
+        f
+        for f in os.listdir(class_dir)
         if os.path.isfile(os.path.join(class_dir, f))
     ]
 
@@ -73,9 +74,9 @@ for class_name, class_id in CLASS_MAP.items():
             created_at = random_date_within_last_two_months()
 
             image = Image(
-                filename=filename,                # Clé simple (sans dossier)
+                filename=filename,  # Clé simple (sans dossier)
                 category=class_id,
-                attribution_method=1,             # Dérivé de la structure du dossier
+                attribution_method=1,  # Dérivé de la structure du dossier
                 created_at=created_at,
             )
             session.add(image)

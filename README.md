@@ -2,14 +2,18 @@
 
 # The NodeJS MVC application
 
-## How to run the app
+## How to run the backend
 
 1. Run `npm install` in the root folder.
 2. Run the server `node server`. Server is listening on 8080.
 3. Open `http://localhost:8080/`
-4. Create you account and register.
 
-# The observability stak
+## How to run the frontend
+
+1. Run `npm install` in the `frontend` folder.
+2. Run the frontend `npm run dev`. Frontend is listening on port 5173.
+
+# The observability stack
 
 - Prometheus: `http://localhost:9090/`
 - Grafana:  `http://localhost:3010/`

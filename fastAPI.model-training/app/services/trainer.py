@@ -93,7 +93,8 @@ class Trainer:
             for fold, (train_idx, val_idx) in enumerate(
                     skf.split(params.df["image_path"], params.df["label"])
             ):
-                """START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                """START
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 PREPARATION FOR EACH FOLD
                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"""
                 fold_time = time.time()

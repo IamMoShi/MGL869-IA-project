@@ -1,11 +1,11 @@
-FROM node:22-alpine3.20 as web-app
+FROM node:22-alpine3.20
 
 WORKDIR /web-server
 
 COPY package*.json ./
 RUN npm install --production
 
-COPY app/ app/
+COPY backend/ ./backend/
 COPY .env ./
 
-CMD ["npm", "start"]
+CMD ["node", "backend/server.js"]

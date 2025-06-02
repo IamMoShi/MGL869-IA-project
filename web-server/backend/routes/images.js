@@ -46,4 +46,30 @@ router.get("/", async (req, res) => {
   }
 });
 
+// POST /api/images
+router.put("/:filename", async (req, res) => {
+  const { filename } = req.params;
+  const { category } = req.body || {};
+
+  if (category === undefined) {
+    return res.status(400).json({ error: "Champ 'category' requis" });
+  }
+
+  try {
+    const image = await Image.findOne({ where: { filename } });
+    if (!image) {
+      return res.status(404).json({ error: "Image non trouvée" });
+    }
+
+    image.category = category;
+    await image.save();
+
+    res.json({ success: true, image });
+  } catch (err) {
+    console.error("Erreur PUT /api/images/:filename", err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+
 module.exports = router;

@@ -16,7 +16,7 @@ const app = express();
 const PORT = 8080;
 const cors = require("cors");
 
-
+app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));

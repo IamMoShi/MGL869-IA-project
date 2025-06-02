@@ -1,7 +1,8 @@
-import logging
 import inspect
+import logging
 
 logger = logging.getLogger("uvicorn")
+
 
 def clean_info_log(message: str):
     frame = inspect.currentframe().f_back

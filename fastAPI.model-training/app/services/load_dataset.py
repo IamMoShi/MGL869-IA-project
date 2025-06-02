@@ -5,11 +5,10 @@ import cv2
 import numpy as np
 import pandas as pd
 import torch
-from PIL import Image
-
 from app.core.minio import PIPELINE_BUCKET, s3_client
-from torch.utils.data import Dataset
 from app.services.log import clean_info_log
+from PIL import Image
+from torch.utils.data import Dataset
 
 
 def load_dataset_from_minio(repertory: str):
@@ -50,7 +49,9 @@ def load_dataset_from_minio(repertory: str):
 
 
 class ImageDatasetFromMinioDF(Dataset):
-    def __init__(self, df: pd.DataFrame, bucket, transform, label_column="label"):
+    def __init__(
+        self, df: pd.DataFrame, bucket, transform, label_column="label"
+    ):
         self.df = df
         self.s3_client = s3_client
         self.bucket_name = bucket
@@ -58,9 +59,14 @@ class ImageDatasetFromMinioDF(Dataset):
         self.label_column = label_column
 
         if self.label_column not in df.columns:
-            raise KeyError(f"Column '{self.label_column}' not found in DataFrame")
+            raise KeyError(
+                f"Column '{self.label_column}' not found in DataFrame"
+            )
 
-        self.label_map = {label: i for i, label in enumerate(sorted(df[self.label_column].unique()))}
+        self.label_map = {
+            label: i
+            for i, label in enumerate(sorted(df[self.label_column].unique()))
+        }
 
     def __len__(self):
         return len(self.df)
@@ -71,7 +77,9 @@ class ImageDatasetFromMinioDF(Dataset):
         label = self.label_map[row[self.label_column]]
 
         # Download image from MinIO
-        response = self.s3_client.get_object(Bucket=self.bucket_name, Key=image_path)
+        response = self.s3_client.get_object(
+            Bucket=self.bucket_name, Key=image_path
+        )
         image = Image.open(response["Body"]).convert("RGB")
         image = np.array(image)
 

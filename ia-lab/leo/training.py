@@ -31,11 +31,11 @@ print("Using device:", DEVICE)
 # Dataset for preprocessed image paths + labels
 class ImageDatasetFromDF(Dataset):
     def __init__(
-            self,
-            df: pd.DataFrame,
-            label_column="label",
-            image_column="image_path",
-            transform=None,
+        self,
+        df: pd.DataFrame,
+        label_column="label",
+        image_column="image_path",
+        transform=None,
     ):
         self.df = df.reset_index(drop=True)
         self.transform = transform
@@ -90,7 +90,7 @@ def objective_factory(model_name, df: pd.DataFrame, pretrained=True):
         scores = []
 
         for fold_idx, (train_idx, val_idx) in enumerate(
-                kf.split(df_local, df_local["label_index"])
+            kf.split(df_local, df_local["label_index"])
         ):
             print(f"\n📂 Fold {fold_idx + 1}/5")
 
@@ -175,8 +175,8 @@ class EarlyStopping:
 
     def __call__(self, val_loss):
         if (
-                self.best_loss is None
-                or val_loss < self.best_loss - self.min_delta
+            self.best_loss is None
+            or val_loss < self.best_loss - self.min_delta
         ):
             self.best_loss = val_loss
             self.counter = 0
@@ -196,7 +196,7 @@ def train(model_name):
     all_metrics = []
 
     for fold, (train_idx, val_idx) in enumerate(
-            skf.split(df["image_path"], df["label"])
+        skf.split(df["image_path"], df["label"])
     ):
         print(f"\n🔁 Fold {fold + 1}/{N_SPLITS}")
 
@@ -239,7 +239,8 @@ def train(model_name):
             total = 0
 
             for images, labels in tqdm(
-                    train_loader, desc=f"Fold {fold + 1} Epoch {epoch + 1}/{EPOCHS}"
+                train_loader,
+                desc=f"Fold {fold + 1} Epoch {epoch + 1}/{EPOCHS}",
             ):
                 images, labels = images.to(DEVICE), labels.to(DEVICE)
 

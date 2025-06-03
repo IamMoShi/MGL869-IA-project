@@ -172,7 +172,7 @@ async function run_tests() {
             console.log(`Prediction for ${file} matches expected class: ${className}\n`);
           }
           else {
-            logStream.write(`ERROR: Prediction for ${file} does not match expected class: ${className}. Classified as: ${prediction}\n`);
+            logStream.write(`ERROR: Prediction for ${fullPath} does not match expected class: ${className}. Classified as: ${prediction}\n`);
             nbErrors++;
           }
           const randomInt = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;

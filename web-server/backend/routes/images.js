@@ -5,7 +5,7 @@ const { Image } = require("../models"); // importe ton modèle Sequelize Image
 
 // Configuration MinIO
 const s3 = new AWS.S3({
-  endpoint: "http://localhost:9000",
+  endpoint: "http://localhost:9002",
   accessKeyId: "minioadmin",
   secretAccessKey: "minioadmin",
   s3ForcePathStyle: true,

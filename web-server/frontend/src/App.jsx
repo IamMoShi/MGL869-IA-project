@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";      // ta page d’accueil
-import Upload from "./pages/Upload.jsx";
+// import Upload from "./pages/Upload.jsx";
 import PhotosGrid from "./components/PhotosGrid.jsx";  // ta page upload
 import { CATEGORY_MAP } from './utils/categoryMap.js'; // ton fichier de mapping des catégories
 
@@ -8,7 +8,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/upload" element={<Upload />} />
+      {/*<Route path="/upload" element={<Upload />} />*/}
 
       {/* Routes dynamiques pour chaque catégorie */}
       {Object.entries(CATEGORY_MAP).map(([name, category]) => (

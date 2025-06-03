@@ -84,19 +84,19 @@ export function CustomDragDrop({
       });
     }
   }
-
-  async function convertFileBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        resolve(reader.result);
-      };
-      reader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  }
+  //
+  // async function convertFileBase64(file) {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(file);
+  //     reader.onload = () => {
+  //       resolve(reader.result);
+  //     };
+  //     reader.onerror = (error) => {
+  //       reject(error);
+  //     };
+  //   });
+  // }
 
   useEffect(() => {
     function handleDragOver(e) {
@@ -297,8 +297,7 @@ export function CustomDragDrop({
             Upload
           </button>
 
-          {/*<progress value={uploadProgress} max="100"></progress>*/}
-          {/*{uploadProgress > 0 && <p>Upload Progress: {uploadProgress}%</p>}*/}
+
         </div>
       )}
     </form>

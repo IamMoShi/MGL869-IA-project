@@ -15,11 +15,7 @@ function Home({ category }) {
     setMessage(data.message);
   };
 
-  // const handlePredict = async () => {
-  //   const res = await fetch('http://localhost:5000/api/images/predict', { method: 'POST' });
-  //   const data = await res.json();
-  //   setPrediction(data.prediction);
-  // };
+
 
     return (
         <div className="App">

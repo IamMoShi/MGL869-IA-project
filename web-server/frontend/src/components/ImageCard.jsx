@@ -9,7 +9,7 @@ const ImageCard = ({ imageUrl, category, onSelectCategory }) => {
     const handleCategoryChange = async (newCategory) => {
       try {
         const filename = imageUrl.split('/').pop(); // extrait le nom du fichier
-        const response = await fetch(`http://localhost:5001/api/images/${filename}`, {
+        const response = await fetch(`http://localhost:5003/api/images/${filename}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

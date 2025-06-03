@@ -6,7 +6,7 @@ services:
     container_name: fastapi-production-model
     restart: no
     ports:
-      - "5000:8000"
+      - "5003:8000"
     environment:
       - PYTHONUNBUFFERED=1
 
@@ -36,22 +36,32 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
 
-#  web-server:
-#    build:
-#      context: ./web-server
-#      dockerfile: Dockerfile
-#    container_name: web-server
-#    restart: no
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      - NODE_ENV=production
-#    env_file:
-#      - ./web-server/.env
-#    volumes:
-#      - ./web-server/backend:/web-server/backend
-#      - ./web-server/logs:/usr/share/logs
-#      - ./web-server/databases:/web-server/databases
+  web-server:
+    build:
+      context: ./web-server/backend
+      dockerfile: Dockerfile
+    container_name: web-server
+    restart: no
+    ports:
+      - "8081:8080"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./web-server/backend/.env
+    volumes:
+      - ./web-server/backend:/web-server/backend
+      - ./web-server/logs:/usr/share/logs
+      - ./web-server/databases:/web-server/databases
+
+  web-client:
+    build:
+      context: ./web-server/frontend
+      dockerfile: Dockerfile
+    container_name: web-client
+    environment:
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
 
   # Storage (similar to S3 of AWS)
   minio:
@@ -103,6 +113,18 @@ services:
       - "3630:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8890:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@test.com
+      PGADMIN_DEFAULT_PASSWORD: admin1234
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
 
   # Loki to collect logs
   loki:
@@ -461,6 +483,8 @@ volumes:
   minio-data:
     driver: local
   pgdata:
+    driver: local
+  pgadmin-data:
     driver: local
 
 networks:

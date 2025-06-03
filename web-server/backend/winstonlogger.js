@@ -1,10 +1,13 @@
 const winston = require('winston');
 require('winston-daily-rotate-file');
+const path = require('path');
 
 const { format } = winston;
 const { combine, timestamp, printf, colorize, align } = winston.format;
 
-const logFilePath = '/usr/share/logs/web-server';
+// const logFilePath = '/usr/share/logs/web-server/backend';
+
+const logFilePath = path.join(__dirname, 'logs/web-server/backend');
 
 // Define a custom format for CSV output
 const csvFormat = format.printf(({ level, message, timestamp }) => {

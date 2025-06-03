@@ -1,0 +1,10 @@
+numpy==1.26.4
+pandas
+opencv-python
+scikit-learn
+matplotlib    
+pillow        
+tensorflow-datasets 
+tensorflow
+tensorflow-serving-api
+tensorboard

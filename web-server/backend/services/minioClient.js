@@ -1,9 +1,15 @@
 const AWS = require("aws-sdk");
 
 const s3 = new AWS.S3({
-  endpoint: process.env.MINIO_ENDPOINT,
-  accessKeyId: process.env.MINIO_ACCESS_KEY,
-  secretAccessKey: process.env.MINIO_SECRET_KEY,
+  // endpoint: process.env.MINIO_ENDPOINT,
+  // accessKeyId: process.env.MINIO_ACCESS_KEY,
+  // secretAccessKey: process.env.MINIO_SECRET_KEY,
+  // s3ForcePathStyle: true,
+  // signatureVersion: "v4",
+
+  endpoint: "http://localhost:9000",
+  accessKeyId: "minioadmin",
+  secretAccessKey: "minioadmin",
   s3ForcePathStyle: true,
   signatureVersion: "v4",
 });

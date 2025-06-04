@@ -5,25 +5,27 @@ const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const uploadRoutes = require('./routes/upload');
 const predictRoutes = require('./routes/predict_image');
-const db = require('./db.js');
+const db = require('./db/sqlite.js');
 const { init: initAuth } = require('./auth');
 const path = require('path')
 const env = require('dotenv').config();
-
+const cors = require("cors");
+const imagesRoute = require("./routes/images");
 const {wlogger, createMessage} = require('./winstonlogger.js');
 
 const app = express();
 const PORT = 8080;
-const cors = require("cors");
 
 
+app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
-const imagesRoute = require("./routes/images");
-app.use(cors()); // Autoriser les requêtes depuis React
+
+app.use(cors());
 app.use("/api/images", imagesRoute);
+app.use("/api/upload", uploadRoutes);
 
 MINIO_PORT = 5001;
 app.listen(MINIO_PORT, () => {
@@ -43,8 +45,8 @@ app.use(passport.session());
 
 app.use('/', authRoutes);
 app.use('/', dashboardRoutes);
-app.use('/', uploadRoutes);
-app.use('/', predictRoutes);
+// app.use('/', uploadRoutes);
+// app.use('/', predictRoutes);
 
 db.sync({ force: false })
   .then(() => {

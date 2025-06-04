@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 1
+    },
+    "auditLog": "auditlogs/audit.json",
+    "files": [
+        {
+            "date": 1748966183658,
+            "name": "/Users/kleger/projects/ets/tp/MGL869-IA-project-final/web-server/backend/logs/web-server/backend-2025-06-03.csv",
+            "hash": "1fb3d0a49d25186fc7fe54d0eca652906fec51ee6dd30984a640722e3baf9dde"
+        },
+        {
+            "date": 1749013648177,
+            "name": "/app/logs/web-server/backend-2025-06-04.csv",
+            "hash": "5a1501e13c8c0e37d7b3aab2a2fc7a7cfce0ce72f73d9888d45d090b88640642"
+        }
+    ],
+    "hashType": "sha256"
+}

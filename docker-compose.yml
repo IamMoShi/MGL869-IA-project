@@ -40,18 +40,24 @@ services:
     build:
       context: ./web-server/backend
       dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     container_name: web-server
     restart: no
     ports:
       - "8081:8080"
     environment:
       - NODE_ENV=production
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
     env_file:
       - ./web-server/backend/.env
     volumes:
-      - ./web-server/backend:/web-server/backend
-      - ./web-server/logs:/usr/share/logs
-      - ./web-server/databases:/web-server/databases
+      - ./web-server/backend:/app
+      - /app/node_modules
 
   web-client:
     build:
@@ -61,7 +67,7 @@ services:
     environment:
       NODE_ENV: production
     ports:
-      - "3000:3000"
+      - "5173:5173"
 
   # Storage (similar to S3 of AWS)
   minio:
@@ -113,6 +119,11 @@ services:
       - "3630:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   pgadmin:
     image: dpage/pgadmin4

@@ -10,9 +10,9 @@ const PhotosGrid = ({ category }) => {
 
   useEffect(() => {
     setLoading(true);
-    let path = `http://localhost:5001/api/images?category=${category}`;
+    let path = `http://localhost:8081/api/images?category=${category}`;
     if (category === undefined) {
-        path = "http://localhost:5001/api/images";
+        path = "http://localhost:8081/api/images";
     }
     fetch(path)
       .then((res) => res.json())

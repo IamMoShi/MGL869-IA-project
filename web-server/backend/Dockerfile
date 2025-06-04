@@ -1,9 +1,10 @@
 FROM node:22-slim
 
-WORKDIR /backend
+WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --production
+
+RUN apt update && apt install -y curl && npm install
 
 COPY . .
 

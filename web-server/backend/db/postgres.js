@@ -2,8 +2,8 @@
 const { Sequelize } = require('sequelize');
 
 const pgSequelize = new Sequelize('web-database', 'postgres', 'changeme', {
-  host: 'localhost',
-  port: 3630,
+  host: 'postgres',
+  port: 5432,
   dialect: 'postgres',
   logging: console.log,
 });

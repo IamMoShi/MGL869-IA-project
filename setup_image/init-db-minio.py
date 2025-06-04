@@ -15,7 +15,7 @@ MINIO_SECRET_KEY = "minioadmin"
 MINIO_BUCKET = "images"
 DB_URL = "postgresql://postgres:changeme@localhost:3630/web-database"
 IMAGES_DIR = "./images"
-ANALYZE_API_URL = "http://127.0.0.1:5000/api/v1/analyze/predict"
+ANALYZE_API_URL = "http://127.0.0.1:5003/api/v1/analyze/predict"
 PROGRESS_EVERY = 100
 
 CLASS_MAP = {
@@ -78,6 +78,11 @@ for idx, filename in enumerate(filenames, start=1):
                 label = resp.json()["prediction"]
                 category = CLASS_MAP[label]
             attribution_method = 0
+
+        exists = session.query(Image).filter_by(filename=filename).first()
+        if exists:
+            print(f"[{idx}/{total}] ⚠️ {filename} déjà présent, ignoré.")
+            continue
 
         image = Image(
             filename=filename,

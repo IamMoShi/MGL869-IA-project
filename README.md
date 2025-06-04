@@ -36,6 +36,14 @@ Then, you can build the fastAPIs using the [docker-compose.yml]() file.
 In order to work with the data processing fastAPI, you should first create two buckets in your MinIO instance `http://127.0.0.1:9001/browser`, by
 default, the buckets are `images` and `training-data`. User is `minioadmin/minioadmin`.
 
+Then, you have to put the `images` bucket in download status (read access for all users)
+
+```bash
+mc alias set local http://localhost:9000 minioadmin minioadmin
+mc admin policy create local readonly-policy minio-policy.json 
+mc anonymous set download local/images 
+```
+
 Then start the api. If everything is ok, you should be able to access the api at `http://localhost:5010/docs` and a table
 name images should have been created in the postgres database.
 

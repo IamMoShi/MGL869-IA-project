@@ -74,8 +74,11 @@ services:
     volumes:
       - minio-data:/data
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+        MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+        MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+        MINIO_ACCESS_KEY : ${MINIO_ROOT_USER}
+        MINIO_SECRET_KEY : ${MINIO_ROOT_USER}
+        MINIO_DEFAULT_BUCKETS: ${MINIO_DEFAULT_BUCKET}
     command: server /data --console-address ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -121,8 +124,8 @@ services:
     ports:
       - "8890:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: user@test.com
-      PGADMIN_DEFAULT_PASSWORD: admin1234
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_USER}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 

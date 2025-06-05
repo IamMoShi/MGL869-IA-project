@@ -1,4 +1,4 @@
-import {LoadSpinnerProps} from "../../../../utils/types";
+import {LoadSpinnerProps} from "../../utils/types";
 
 export function LoadSpinner({ size = "medium" }: LoadSpinnerProps) {
   const sizeClasses = {

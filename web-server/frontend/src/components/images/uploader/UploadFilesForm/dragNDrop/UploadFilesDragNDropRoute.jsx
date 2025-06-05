@@ -1,6 +1,6 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState} from "react";
 
-import {createFormData, MAX_FILE_SIZE_NEXTJS_ROUTE, validateFiles} from "../../../../../utils/fileUploadHelpers.js";
+import {FILE_NUMBER_LIMIT, MAX_FILE_SIZE} from "../../../../../utils/fileUploadHelpers.js";
 import {UploadFilesFormDragNDrop} from "./UploadFilesFormDragNDrop.jsx";
 
 
@@ -11,7 +11,6 @@ const  UploadFilesDragNDropRoute = () =>{
 
   function uploadFiles(files) {
     setImagesToUpload([...imagesToUpload, ...files]);
-    console.log("imagesToUpload", imagesToUpload);
   }
 
   function deleteFile(indexImg) {
@@ -21,10 +20,10 @@ const  UploadFilesDragNDropRoute = () =>{
 
   return (
     <UploadFilesFormDragNDrop
-      maxFileSize={MAX_FILE_SIZE_NEXTJS_ROUTE}
+      maxFileSize={MAX_FILE_SIZE}
       onUpload={uploadFiles}
       onDelete={deleteFile}
-      count={30}
+      count={FILE_NUMBER_LIMIT}
       formats={["jpg", "jpeg", "png"]}
       imagesToUpload={imagesToUpload}
     />

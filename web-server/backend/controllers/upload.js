@@ -63,7 +63,6 @@ module.exports = {
             return res.status(400).json({ error: 'No files uploaded or incorrect format.' });
         }
 
-        console.log('images', images);
         if (images?.length) {
 
             try {
@@ -100,7 +99,6 @@ module.exports = {
                     }),
                 );
 
-                console.log('images done');
             } catch (e) {
                 console.error('error', e);
                  resultBody = {

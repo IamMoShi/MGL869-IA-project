@@ -1,4 +1,4 @@
-const uploadSF = require("../models/bucket");
+const s3 = require("../services/minioClient");
 
 
 module.exports = {
@@ -14,4 +14,20 @@ module.exports = {
 
         return `${dateStr}_${fileName}`;
     },
+
+
+       deleteFileFromBucket : async({ bucketName, fileName }) =>{
+           try {
+               const params = {
+                   Bucket: bucketName,
+                   Key: fileName,
+               };
+               await s3.deleteObject(params).promise();
+               console.log(`✅ Fichier supprimé : ${fileName}`);
+               return true;
+           } catch (err) {
+               console.error("❌ Erreur lors de la suppression :", err);
+               return  false;
+           }
+    }
 };

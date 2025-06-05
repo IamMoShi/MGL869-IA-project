@@ -30,3 +30,5 @@ logs/fastAPI.production-model.csv
 *.jpg
 
 tests/images-processing.log
+
+*.log

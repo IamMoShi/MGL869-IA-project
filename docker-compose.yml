@@ -157,7 +157,7 @@ services:
     ports:
       - "3010:3000"
     volumes:
-      - grafana-storage:/var/lib/grafana
+     - grafana-storage:/var/lib/grafana
 ##      - ./observability/grafana-storage:/var/lib/grafana
 
   # Uses to setup ELK stack
@@ -382,7 +382,7 @@ services:
     volumes:
       - certs:/usr/share/logstash/certs
       - logstashdata01:/usr/share/logstash/data
-      - ./web-server/logs/:/usr/share/logs/
+      - ./fastAPI.production-model/app/logs/:/usr/share/logs/fastAPI.production-model/
       - ./observability/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
     environment:
       - xpack.monitoring.enabled=false

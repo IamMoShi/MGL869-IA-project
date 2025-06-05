@@ -1,7 +1,9 @@
 import os
-import boto3
 import threading
+
+import boto3
 from tqdm import tqdm
+
 
 class ProgressPercentage:
     def __init__(self, filename):
@@ -9,7 +11,9 @@ class ProgressPercentage:
         self._size = float(os.path.getsize(filename))
         self._seen_so_far = 0
         self._lock = threading.Lock()
-        self._tqdm = tqdm(total=self._size, unit='B', unit_scale=True, desc=filename)
+        self._tqdm = tqdm(
+            total=self._size, unit="B", unit_scale=True, desc=filename
+        )
 
     def __call__(self, bytes_amount):
         with self._lock:
@@ -17,6 +21,7 @@ class ProgressPercentage:
             self._tqdm.update(bytes_amount)
             if self._seen_so_far >= self._size:
                 self._tqdm.close()
+
 
 # --- Configuration MinIO
 endpoint = "http://localhost:9000"
@@ -40,14 +45,19 @@ for root, _, files in os.walk(folder_path):
     for filename in files:
         local_path = os.path.join(root, filename)
         relative_path = os.path.relpath(local_path, folder_path)
-        s3_key = os.path.join(prefix_in_bucket, relative_path).replace("\\", "/")
+        s3_key = os.path.join(prefix_in_bucket, relative_path).replace(
+            "\\", "/"
+        )
         size = os.path.getsize(local_path)
         total_size += size
         all_files.append((local_path, s3_key, size))
 
 # --- Barre de progression globale
-with tqdm(total=total_size, unit='B', unit_scale=True, desc="Uploading folder") as pbar:
+with tqdm(
+    total=total_size, unit="B", unit_scale=True, desc="Uploading folder"
+) as pbar:
     for local_path, s3_key, size in all_files:
+
         def progress_callback(bytes_transferred, size=size):
             pbar.update(min(bytes_transferred, size))  # Évite de dépasser
 

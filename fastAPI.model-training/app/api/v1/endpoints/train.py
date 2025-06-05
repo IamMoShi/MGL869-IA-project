@@ -1,11 +1,10 @@
 import logging
 
 import pandas as pd
-from sklearn.model_selection import train_test_split
-
 from app.services.load_dataset import load_dataset_from_minio
 from app.services.trainer import Trainer, TrainingParams
 from fastapi import APIRouter, Query
+from sklearn.model_selection import train_test_split
 
 logger = logging.getLogger("uvicorn")
 router = APIRouter()
@@ -36,7 +35,7 @@ def launch_training(df_name: str = Query(...)):
         df_train,
         test_size=0.2,  # 20% pour validation
         stratify=df_train["label"],  # pour garder le même équilibre de classes
-        random_state=42  # pour que le split soit reproductible
+        random_state=42,  # pour que le split soit reproductible
     )
     try:
         trainer.start_training(

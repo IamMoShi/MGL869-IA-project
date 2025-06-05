@@ -42,7 +42,11 @@ async def get_latest_images(
 
 async def get_all_images(db: AsyncSession) -> Sequence[DBImage]:
     """Return all images."""
-    stmt = select(DBImage).where(DBImage.category.isnot(None)).order_by(DBImage.created_at.desc())
+    stmt = (
+        select(DBImage)
+        .where(DBImage.category.isnot(None))
+        .order_by(DBImage.created_at.desc())
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 
@@ -51,4 +55,3 @@ async def get_random_images(db: AsyncSession, limit: int = 500):
     stmt = select(DBImage).order_by(func.random()).limit(limit)
     result = await db.execute(stmt)
     return result.scalars().all()
-

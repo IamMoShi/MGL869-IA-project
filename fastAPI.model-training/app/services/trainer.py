@@ -7,11 +7,11 @@ import albumentations as A
 import pandas as pd
 import timm
 import torch
+from app.core.metrics import training_metrics
 from app.core.minio import MODEL_BUCKET, PIPELINE_BUCKET, s3_client
 from app.services.early_stopping import EarlyStopping
 from app.services.load_dataset import ImageDatasetFromMinioDF
 from app.services.log import clean_info_log
-from app.core.metrics import training_metrics
 from pydantic.v1 import BaseModel
 from sklearn.model_selection import StratifiedKFold
 from timm import optim
@@ -104,8 +104,12 @@ class Trainer:
                 bucket=PIPELINE_BUCKET,
             )
 
-            train_loader = DataLoader(train_dataset, batch_size=params.batch_size, shuffle=True)
-            val_loader = DataLoader(val_dataset, batch_size=params.batch_size, shuffle=False)
+            train_loader = DataLoader(
+                train_dataset, batch_size=params.batch_size, shuffle=True
+            )
+            val_loader = DataLoader(
+                val_dataset, batch_size=params.batch_size, shuffle=False
+            )
 
             optimizer = optim.Adam(
                 model.parameters(),
@@ -123,17 +127,26 @@ class Trainer:
                 epoch_time = time.time()
                 clean_info_log(f"Epoch {epoch + 1}/{params.max_epochs}")
                 training_metrics.set(epoch + 1, {"metric": "current_epoch"})
-                training_metrics.set(epoch / params.max_epochs, {"metric": "training_progress"})
+                training_metrics.set(
+                    epoch / params.max_epochs, {"metric": "training_progress"}
+                )
 
                 # TRAINING
                 model.train()
                 i = 0
                 for images, labels in train_loader:
-                    clean_info_log(f"batch number {i + 1} / {len(train_loader)}")
-                    training_metrics.set(epoch / params.max_epochs + i / (len(train_loader) * params.max_epochs),
-                                         {"metric": "training_progress"})
+                    clean_info_log(
+                        f"batch number {i + 1} / {len(train_loader)}"
+                    )
+                    training_metrics.set(
+                        epoch / params.max_epochs
+                        + i / (len(train_loader) * params.max_epochs),
+                        {"metric": "training_progress"},
+                    )
 
-                    images, labels = images.to(DEVICE).float(), labels.to(DEVICE)
+                    images, labels = images.to(DEVICE).float(), labels.to(
+                        DEVICE
+                    )
                     optimizer.zero_grad()
                     outputs = model(images)
                     loss = criterion(outputs, labels)
@@ -149,7 +162,9 @@ class Trainer:
 
                 with torch.no_grad():
                     for images, labels in val_loader:
-                        images, labels = images.to(DEVICE).float(), labels.to(DEVICE)
+                        images, labels = images.to(DEVICE).float(), labels.to(
+                            DEVICE
+                        )
                         outputs = model(images)
                         loss = criterion(outputs, labels)
                         val_loss += loss.item() * images.size(0)
@@ -160,16 +175,24 @@ class Trainer:
                 val_loss /= val_total
                 val_acc = val_correct / val_total
 
-                training_metrics.set(time.time() - epoch_time, {"metric": "epoch_time"})
+                training_metrics.set(
+                    time.time() - epoch_time, {"metric": "epoch_time"}
+                )
                 training_metrics.set(val_loss, {"metric": "validation_loss"})
-                training_metrics.set(val_acc, {"metric": "validation_accuracy"})
+                training_metrics.set(
+                    val_acc, {"metric": "validation_accuracy"}
+                )
 
-                clean_info_log(f"Validation loss: {val_loss:.4f}, accuracy: {val_acc:.4f}")
+                clean_info_log(
+                    f"Validation loss: {val_loss:.4f}, accuracy: {val_acc:.4f}"
+                )
 
                 if val_loss < best_val_loss:
                     best_val_loss = val_loss
                     best_model_state = model.state_dict()
-                    clean_info_log(f"Validation improved, saving best model state...")
+                    clean_info_log(
+                        f"Validation improved, saving best model state..."
+                    )
 
                 early_stopping(val_loss)
                 if early_stopping.early_stop:
@@ -187,10 +210,16 @@ class Trainer:
                 )
 
             training_metrics.set(1.0, {"metric": "training_progress"})
-            training_metrics.set(time.time() - training_time, {"metric": "training_time"})
+            training_metrics.set(
+                time.time() - training_time, {"metric": "training_time"}
+            )
 
     def _save_model_to_minio(
-            self, model: nn.Module, model_name: str, best_model_state: dict, df_name: str
+        self,
+        model: nn.Module,
+        model_name: str,
+        best_model_state: dict,
+        df_name: str,
     ):
         """Save the trained model to MinIO.
 

@@ -4,10 +4,10 @@ from typing import Sequence
 from app.core.database import get_db
 from app.models.image import Image
 from app.services.database import (
+    get_all_images,
     get_images_since,
     get_latest_images,
     get_random_images,
-    get_all_images
 )
 from app.services.images.augmentation import augment_images_from_minio
 from fastapi import APIRouter, Depends

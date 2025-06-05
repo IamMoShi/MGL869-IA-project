@@ -38,8 +38,17 @@ services:
       - "5020:8000"
     environment:
       - PYTHONUNBUFFERED=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+        limits:
+          cpus: '6.0'  # Alternative à `cpu_count: 6` si tu veux vraiment
+    runtime: nvidia  # (optionnel, dépend de la version de Compose)
 
-#  web-server:
+
+  #  web-server:
 #    build:
 #      context: ./web-server
 #      dockerfile: Dockerfile

@@ -86,7 +86,7 @@ def objective_factory(model_name, df: pd.DataFrame, pretrained=True):
         df_local["label_index"] = df_local["label"].map(label_to_index)
 
         # Cross-validation setup
-        kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+        kf = StratifiedKFold(n_splits=2, shuffle=True, random_state=42)
         scores = []
 
         for fold_idx, (train_idx, val_idx) in enumerate(
@@ -324,7 +324,7 @@ def train(model_name):
 if __name__ == "__main__":
     from dataset_file_manager import load
 
-    df = load("datasets/augmented/images")
+    df = load("datasets/base-dataset/images")
     print(df.head())
 
     # Launch Optuna for that model

@@ -4,7 +4,7 @@ import time
 import httpx
 
 # url = "http://20.63.107.215:8000/api/v1/analyze/predict"
-url = "http://localhost:8000/api/v1/analyze/predict"
+url = "http://localhost:5000/api/v1/analyze/predict"
 image_path = "assets/sample.jpg"
 
 

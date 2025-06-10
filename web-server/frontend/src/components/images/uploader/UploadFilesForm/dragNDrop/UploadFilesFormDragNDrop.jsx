@@ -162,8 +162,9 @@ export function UploadFilesFormDragNDrop({
 
         const formData = createFormData(files);
 
+        // "http://localhost:5001/api/upload/multi"
         try {
-            const response = await fetch("http://localhost:5001/api/upload/multi", {
+            const response = await fetch("http://localhost:8080/api/upload/multi", {
                 method: "POST",
                 body: formData,
             });

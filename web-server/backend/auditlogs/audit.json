@@ -6,14 +6,14 @@
     "auditLog": "auditlogs/audit.json",
     "files": [
         {
-            "date": 1748966183658,
-            "name": "/Users/kleger/projects/ets/tp/MGL869-IA-project-final/web-server/backend/logs/web-server/backend-2025-06-03.csv",
-            "hash": "1fb3d0a49d25186fc7fe54d0eca652906fec51ee6dd30984a640722e3baf9dde"
+            "date": 1749122115637,
+            "name": "/Users/kleger/projects/ets/tp/MGL869-IA-project-final/web-server/backend/logs/web-server/backend-2025-06-05.csv",
+            "hash": "5816add251cfbbf68d7eb69e54668de1dc8ea2340a65d17a2e0f145e8c90b28e"
         },
         {
-            "date": 1749020236792,
-            "name": "/Users/kleger/projects/ets/tp/MGL869-IA-project-final/web-server/backend/logs/web-server/backend-2025-06-04.csv",
-            "hash": "149c706cfa72a9f4a1eca708c2c3637ac218841a386af5be56642cd79757ca25"
+            "date": 1749155300763,
+            "name": "/Users/kleger/projects/ets/mgl869/tp/MGL869-IA-project-final/web-server/backend/logs/web-server/backend-2025-06-05.csv",
+            "hash": "c1ed7696eddf31a3cd25d6778211ccec62a0540b516d513b49c2f66e3dea26f0"
         }
     ],
     "hashType": "sha256"

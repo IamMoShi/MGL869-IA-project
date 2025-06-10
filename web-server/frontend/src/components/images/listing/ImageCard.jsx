@@ -27,7 +27,7 @@ const ImageCard = ({imageUrl, category, fetchData}) => {
         setIsLoading(true);
         try {
             const filename = imageUrl.split('/').pop();
-            await fetch(`http://localhost:5001/api/images/${filename}/delete`, {
+            await fetch(`http://localhost:8080/api/images/${filename}/delete`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -53,7 +53,7 @@ const ImageCard = ({imageUrl, category, fetchData}) => {
         setIsLoading(true);
         try {
             const filename = imageUrl.split('/').pop();
-            const response = await fetch(`http://localhost:5001/api/images/${filename}`, {
+            const response = await fetch(`http://localhost:8080/api/images/${filename}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

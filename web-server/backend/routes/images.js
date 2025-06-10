@@ -1,17 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const AWS = require("aws-sdk");
 const { Image } = require("../models");
 const {deleteFileFromBucket} = require("../utils/helpers"); // importe ton modèle Sequelize Image
 
-// Configuration MinIO
-// const s3Client = new AWS.S3({
-//   endpoint: "http://localhost:9000",
-//   accessKeyId: "minioadmin",
-//   secretAccessKey: "minioadmin",
-//   s3ForcePathStyle: true,
-//   signatureVersion: "v4",
-// });
+
 
 // GET /api/images?category=4
 router.get("/", async (req, res) => {
@@ -26,11 +18,7 @@ router.get("/", async (req, res) => {
       whereClause.category = categoryFilter;
     }
 
-    // Récupère en base la liste des images filtrées
-    // const imagesTotal = await Image.findAll({
-    //   where: whereClause,
-    //   attributes: ["filename", "category"],
-    // });
+
 
     const { rows: imagesData, count: total } = await Image.findAndCountAll({
       where: whereClause,

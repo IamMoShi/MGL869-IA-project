@@ -76,6 +76,7 @@ module.exports = {
                         let resML = await axios.get(`http://localhost:5003/api/v1/analyze/image/${imageName}`)
                             .then(({data}) => data)
                             .catch(err => err.data);
+
                         // save file info to database
                         const CATEGORY_MAP = {
                             buildings: 0,

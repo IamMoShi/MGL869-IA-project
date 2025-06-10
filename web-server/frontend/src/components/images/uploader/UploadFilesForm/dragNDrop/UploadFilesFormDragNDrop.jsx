@@ -1,9 +1,9 @@
-import {LoadSpinner} from "../LoadSpinner.js";
+import {LoadSpinner} from "../../../../common/LoadSpinner.tsx";
 import {useEffect, useRef, useState} from "react";
 import {FaUpload} from "react-icons/fa";
 import {BsX} from "react-icons/bs";
 import Swal from "sweetalert2";
-import {createFormData, MAX_FILE_SIZE_NEXTJS_ROUTE, validateFiles} from "../../../../../utils/fileUploadHelpers.js";
+import {createFormData, MAX_FILE_SIZE, validateFiles} from "../../../../../utils/fileUploadHelpers.js";
 import TopNotification from "sweetalert2";
 
 
@@ -80,6 +80,17 @@ export function UploadFilesFormDragNDrop({
         }
     }
 
+      function showAlert(icon, title, text) {
+         Swal.fire({
+            icon: icon,
+            title: title,
+            text: text,
+            showConfirmButton: false,
+            width: 500,
+            timer: 1500,
+        });
+    }
+
 
     async function convertFileBase64(file) {
       return new Promise((resolve, reject) => {
@@ -140,7 +151,7 @@ export function UploadFilesFormDragNDrop({
 
         const filesValidationResult = validateFiles(
             filesInfo,
-            MAX_FILE_SIZE_NEXTJS_ROUTE,
+            MAX_FILE_SIZE,
         );
         if (filesValidationResult) {
             alert(filesValidationResult);
@@ -222,6 +233,23 @@ export function UploadFilesFormDragNDrop({
                         </div>
                     </div>
                 </div>
+
+                {isLoading ? (
+                    <LoadSpinner/>
+                ) : (
+
+
+                    <div className="mt-8">
+                        <button
+                            disabled={isLoading}
+                            className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 focus:outline-hidden"
+                        >
+                            Upload
+                        </button>
+                    </div>
+
+                )}
+
                 <div className="pt-2.5">
                     <ul role="list" className="divide-y divide-gray-200">
                         {imagesToUpload.map((img, index) => (
@@ -271,21 +299,7 @@ export function UploadFilesFormDragNDrop({
                 </div>
 
 
-                {isLoading ? (
-                    <LoadSpinner/>
-                ) : (
-                    <>
 
-                        <div className="mt-8">
-                            <button
-                                disabled={isLoading}
-                                className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 focus:outline-hidden"
-                            >
-                                Upload
-                            </button>
-                        </div>
-                    </>
-                )}
             </div>
         </form>
     );

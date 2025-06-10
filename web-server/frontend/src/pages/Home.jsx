@@ -1,26 +1,14 @@
-import React, {useState} from "react";
+import React  from "react";
 import '../styles/Home.css';
 
-import Header from "../components/Header";
-import PhotosGrid from "../components/PhotosGrid";
-import {Typography} from "@mui/joy";
+import Header from "../components/layout/Header";
+import ImageGridInfinityScrolling from "../components/images/listing/ImageGridInfinityScrolling.tsx";
 
 function Home({ category }) {
-  const [message, setMessage] = useState('');
-  const [prediction, setPrediction] = useState('');
-
-  const handleUpload = async () => {
-    const res = await fetch('http://localhost:5000/upload', { method: 'POST' });
-    const data = await res.json();
-    setMessage(data.message);
-  };
-
-
-
     return (
         <div className="App">
             <Header category={category}/>
-            <PhotosGrid category={category}/>
+            <ImageGridInfinityScrolling category={category}/>
         </div>
     );
 }

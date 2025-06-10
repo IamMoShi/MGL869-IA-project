@@ -47,23 +47,32 @@ services:
           cpus: '6.0'  # Alternative à `cpu_count: 6` si tu veux vraiment
     runtime: nvidia  # (optionnel, dépend de la version de Compose)
 
+  web-server:
+    build:
+      context: ./web-server/backend
+      dockerfile: Dockerfile
+    container_name: web-server
+    restart: no
+    ports:
+      - "8081:8080"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./web-server/backend/.env
+    volumes:
+      - ./web-server/backend:/web-server/backend
+      - ./web-server/logs:/usr/share/logs
+      - ./web-server/databases:/web-server/databases
 
-  #  web-server:
-#    build:
-#      context: ./web-server
-#      dockerfile: Dockerfile
-#    container_name: web-server
-#    restart: no
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      - NODE_ENV=production
-#    env_file:
-#      - ./web-server/.env
-#    volumes:
-#      - ./web-server/backend:/web-server/backend
-#      - ./web-server/logs:/usr/share/logs
-#      - ./web-server/databases:/web-server/databases
+  web-client:
+    build:
+      context: ./web-server/frontend
+      dockerfile: Dockerfile
+    container_name: web-client
+    environment:
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
 
   redis:
     image: redis:7.4.4
@@ -82,8 +91,11 @@ services:
     volumes:
       - minio-data:/data
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+        MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+        MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+        MINIO_ACCESS_KEY : ${MINIO_ROOT_USER}
+        MINIO_SECRET_KEY : ${MINIO_ROOT_USER}
+        MINIO_DEFAULT_BUCKETS: ${MINIO_DEFAULT_BUCKET}
     command: server /data --console-address ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -118,9 +130,21 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "3630:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8890:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_USER}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
 
   # Loki to collect logs
   loki:
@@ -480,6 +504,8 @@ volumes:
   minio-data:
     driver: local
   pgdata:
+    driver: local
+  pgadmin-data:
     driver: local
   grafana-storage:
     driver: local

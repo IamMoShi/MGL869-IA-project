@@ -1,3 +1,6 @@
+import Swal from "sweetalert2";
+
+
 export const CATEGORY_MAP = {
     buildings: 0,
     forest: 1,
@@ -7,16 +10,31 @@ export const CATEGORY_MAP = {
     street: 5,
 };
 
+export const ID_TO_CATEGORY = Object.fromEntries(
+    Object.entries(CATEGORY_MAP).map(([key, value]) => [value, key])
+);
 
-// Set error status and result body if error occurs
-export function setErrorStatus(
-    status: number,
-    resultBody: { status: string; message: string },
-) {
-    status = 500;
-    resultBody = {
-        status: "fail",
-        message: "Upload error",
-    };
-    return { status, resultBody };
+
+/**
+ * @param {any} ID_ACTIVE
+ */
+export function getCategoryStatus(ID_ACTIVE: unknown) {
+    return Object.entries(CATEGORY_MAP).map(([name, id]) => ({
+        id,
+        name,
+        isActive: id === ID_ACTIVE
+    }));
 }
+
+
+export const TopNotification = Swal.mixin({
+    toast: true,
+    position: "bottom-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+    },
+});

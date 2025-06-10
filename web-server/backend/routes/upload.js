@@ -4,6 +4,6 @@ const upload = multer({ dest: 'uploads/' });
 const {uploadImage, uploadMultiImages} = require('../controllers/upload');
 
 router.post('/', upload.single('file'), uploadImage);
-router.post('/multi', upload.array('file', 1000), uploadMultiImages);
+router.post('/multi', upload.array('file', 9000), uploadMultiImages);
 
 module.exports = router;

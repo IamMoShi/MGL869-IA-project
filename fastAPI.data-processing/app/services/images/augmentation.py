@@ -81,6 +81,5 @@ def augment_images_from_minio(
                     )
 
             except Exception as e:
-                logger.error(
-                    f"Failed to augment {filename}: {str(e).replace(chr(10), '\\n')}"
-                )
+                error_message = str(e).replace("\n", "\\n")
+                logger.error(f"Failed to augment {filename}: {error_message}")

@@ -30,4 +30,4 @@ const  UploadFilesDragNDropRoute = () =>{
   );
 }
 
-export default  UploadFilesDragNDropRoute;
+export default UploadFilesDragNDropRoute;

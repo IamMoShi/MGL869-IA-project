@@ -4,6 +4,7 @@
 
 .vscode/settings.json
 .venv/
+.env/*
 node_modules/
 Compiled-HTML/
 mvc_demo.sqlite
@@ -21,7 +22,7 @@ web-server/logs/
 /ia-lab/leo/normalized_dataset/
 /ia-lab/leo/datasets/
 /ia-lab/leo/augmented_dataset/
-/setup_image/images/
+/setup_image/images_raw/
 
 fastAPI.production-model/app/logs/
 

@@ -2,15 +2,11 @@
 
 # The NodeJS MVC application
 
-## How to run the backend
+## How to run the web-server
 
 1. Run `npm install` in the root folder.
-2. Run the server `node server`. (Port 5001)
-
-## How to run the frontend
-
-1. Run `npm install` in the `frontend` folder.
-2. Run the frontend `npm run dev`. Frontend is listening on port 5173.
+2. Build the docker using the [docker-compose.yml]() file.
+3. The frontend should be available at `http://localhost:3000/`.
 
 # The observability stack
 

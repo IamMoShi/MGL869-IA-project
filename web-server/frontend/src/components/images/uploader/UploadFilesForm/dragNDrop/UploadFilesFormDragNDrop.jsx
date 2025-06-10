@@ -162,8 +162,10 @@ export function UploadFilesFormDragNDrop({
 
         const formData = createFormData(files);
 
+        const BASE_URL = import.meta.env.VITE_MINIO_URL;
+
         try {
-            const response = await fetch("http://localhost:5001/api/upload/multi", {
+            await fetch(`${BASE_URL}/api/upload/multi`, {
                 method: "POST",
                 body: formData,
             });

@@ -49,14 +49,12 @@ def train(
 
         train_dataset = ImageDatasetFromMinioDF(
             df=train_df,
-            s3_client=s3_client,
             bucket=PIPELINE_BUCKET,
             transform=transform,
         )
 
         val_dataset = ImageDatasetFromMinioDF(
             df=val_df,
-            s3_client=s3_client,
             bucket=PIPELINE_BUCKET,
             transform=transform,
         )
@@ -156,3 +154,4 @@ def train(
                 model.state_dict(), f"{model_name}_fold{fold+1}_best.pth"
             )
             print(f"✅ Best model saved: {model_name}_fold{fold+1}_best.pth")
+    return all_metrics

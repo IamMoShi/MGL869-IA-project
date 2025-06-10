@@ -17,6 +17,8 @@ export default  function  ImageGridInfinityScrolling  ({category})  {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [limit, setLimit] = useState(500);
+    // @ts-ignore
+    const baseUrl = import.meta.env.VITE_API_URL;
 
     const observer = useRef<IntersectionObserver | null>(null);
 
@@ -24,9 +26,9 @@ export default  function  ImageGridInfinityScrolling  ({category})  {
         setLoading(true);
 
         try {
-            let path = `http://localhost:5001/api/images?category=${category}&limit=${limit}&skip=${(page - 1) * limit}`;
+            let path = `${baseUrl}/api/images?category=${category}&limit=${limit}&skip=${(page - 1) * limit}`;
             if (category === undefined) {
-                path = `http://localhost:5001/api/images?limit=${limit}&skip=${(page - 1) * limit}`;
+                path = `${baseUrl}/api/images?limit=${limit}&skip=${(page - 1) * limit}`;
             }
 
             const res = await fetch(path);

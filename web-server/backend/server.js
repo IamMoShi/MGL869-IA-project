@@ -14,7 +14,7 @@ const imagesRoute = require("./routes/images");
 const {wlogger, createMessage} = require('./winstonlogger.js');
 
 const app = express();
-const PORT = 8080;
+// const PORT = 8080;
 
 
 app.use(express.json());
@@ -27,9 +27,9 @@ app.use(cors());
 app.use("/api/images", imagesRoute);
 app.use("/api/upload", uploadRoutes);
 
-MINIO_PORT = 5001;
-app.listen(MINIO_PORT, () => {
-  console.log(`✅ Backend démarré sur http://localhost:${MINIO_PORT}`);
+BACKEND_IMAGES_PORT = 5001;
+app.listen(BACKEND_IMAGES_PORT, () => {
+  console.log(`✅ Backend démarré sur http://localhost:${BACKEND_IMAGES_PORT}`);
 });
 
 
@@ -48,9 +48,9 @@ app.use('/', dashboardRoutes);
 // app.use('/', uploadRoutes);
 // app.use('/', predictRoutes);
 
-db.sync({ force: false })
-  .then(() => {
-    app.listen(PORT, console.log('Server is running on port: ' + PORT));
-  });
+// db.sync({ force: false })
+//   .then(() => {
+//     app.listen(PORT, console.log('Server is running on port: ' + PORT));
+//   });
 
 wlogger.info(createMessage( Date.now(), 'SUCCESS', 'Web-Server', 'server.js', '', '', 'Web-Server démarré avec succès'));

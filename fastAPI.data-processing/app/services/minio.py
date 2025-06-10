@@ -8,7 +8,7 @@ from PIL import Image as PILImage
 logger = logging.getLogger("uvicorn")
 
 
-def get_image_from_minio(key: str, bucket: str) -> Union[PILImage, None]:
+def get_image_from_minio(key: str, bucket: str) -> Union[PILImage.Image, None]:
     """Download an image from MinIO and convert it to a PIL Image.
 
     :param key: The key of the image in the bucket.
@@ -22,7 +22,8 @@ def get_image_from_minio(key: str, bucket: str) -> Union[PILImage, None]:
         )
         return img
     except Exception as e:
-        logger.error(f"Failed to load {key}: {str(e).replace('\n', '\\n')}")
+        safe_error = str(e).replace('\n', '\\n')
+        logger.error(f"Failed to load {key}: {safe_error}")
         return None
 
 

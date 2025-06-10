@@ -7,12 +7,13 @@ const PhotosGrid = ({ category }) => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     setLoading(true);
-    let path = `http://localhost:8081/api/images?category=${category}`;
+    let path = `http://${baseUrl}/api/images?category=${category}`;
     if (category === undefined) {
-        path = "http://localhost:8081/api/images";
+        path = `http://${baseUrl}/api/images`;
     }
     fetch(path)
       .then((res) => res.json())

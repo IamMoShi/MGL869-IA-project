@@ -5,6 +5,8 @@ const {get} = require("axios");
 const axios = require("axios");
 const {DataTypes} = require("sequelize");
 
+const baseUrl = process.env.ML_API_URL;
+
 const MODULE = 'upload.js';
 module.exports = {
     uploadImage: async (req, res) => {
@@ -20,7 +22,7 @@ module.exports = {
             const imageBucket = await uploadSF.uploadSingleFile(req.file);
             const imageName = imageBucket.Location.split('/').pop();
 
-            let resML = await axios.get(`http://localhost:5003/api/v1/analyze/image/${imageName}`)
+            let resML = await axios.get(`${baseUrl}/api/v1/analyze/image/${imageName}`)
                 .then(({data}) => data)
                 .catch(err => err.data);
 
@@ -58,6 +60,8 @@ module.exports = {
 
         const images = req.files;
 
+        console.log('images :', images);
+
         if (!Array.isArray(images)) {
             wlogger.error(createMessage(Date.now(), 'PARAM_MISSING', MODULE, '/uploadImage', '', '', 'Aucunes images reçues'));
             return res.status(400).json({ error: 'No files uploaded or incorrect format.' });
@@ -73,7 +77,7 @@ module.exports = {
                         const imageBucket = await uploadSF.uploadSingleFile(fileObject);
                         const imageName = imageBucket.Location.split('/').pop();
 
-                        let resML = await axios.get(`http://localhost:5003/api/v1/analyze/image/${imageName}`)
+                        let resML = await axios.get(`http://fastapi-production-model:8000/api/v1/analyze/image/${imageName}`)
                             .then(({data}) => data)
                             .catch(err => err.data);
                         // save file info to database
@@ -90,14 +94,15 @@ module.exports = {
 
                         await Image.create({filename: resML.filename, category: resML.category, created_at: Date.now()});
 
-                        resultBody = {
-                            status: "success",
-                            message: "Succès de l'upload",
-                        };
 
-                        res.status(200).json(resultBody);
                     }),
                 );
+
+                resultBody = {
+                    status: "success",
+                    message: "Succès de l'upload",
+                };
+                res.status(200).json(resultBody);
 
             } catch (e) {
                 console.error('error', e);
